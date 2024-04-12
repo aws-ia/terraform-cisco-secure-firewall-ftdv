@@ -1,31 +1,29 @@
 module "service_network" {
-  source               = "CiscoDevNet/secure-firewall/aws//modules/network"
-  vpc_name             = var.service_vpc_name
-  vpc_cidr             = var.service_vpc_cidr
-  create_igw           = var.service_create_igw
-  igw_name             = var.service_igw_name
-  mgmt_subnet_cidr     = var.mgmt_subnet_cidr
-  outside_subnet_cidr  = var.outside_subnet_cidr
-  diag_subnet_cidr     = var.diag_subnet_cidr
-  inside_subnet_cidr   = var.inside_subnet_cidr
-  fmc_ip               = var.fmc_ip
-  mgmt_subnet_name     = var.mgmt_subnet_name
-  outside_subnet_name  = var.outside_subnet_name
-  diag_subnet_name     = var.diag_subnet_name
-  inside_subnet_name   = var.inside_subnet_name
-  outside_interface_sg = var.outside_interface_sg
-  inside_interface_sg  = var.inside_interface_sg
-  mgmt_interface_sg    = var.mgmt_interface_sg
-  use_ftd_eip          = var.use_ftd_eip
+  source                = "CiscoDevNet/secure-firewall/aws//modules/network"
+  vpc_name              = var.service_vpc_name
+  create_igw            = var.service_create_igw
+  igw_name              = var.service_igw_name
+  mgmt_subnet_cidr      = var.mgmt_subnet_cidr
+  outside_subnet_cidr   = var.outside_subnet_cidr
+  diag_subnet_cidr      = var.diag_subnet_cidr
+  inside_subnet_cidr    = var.inside_subnet_cidr
+  fmc_ip                = var.fmc_ip
+  mgmt_subnet_name      = var.mgmt_subnet_name
+  outside_subnet_name   = var.outside_subnet_name
+  diag_subnet_name      = var.diag_subnet_name
+  inside_subnet_name    = var.inside_subnet_name
+  outside_interface_sg  = var.outside_interface_sg
+  inside_interface_sg   = var.inside_interface_sg
+  mgmt_interface_sg     = var.mgmt_interface_sg
+  use_fmc_eip           = var.use_fmc_eip
+  use_ftd_eip           = var.use_ftd_eip
 }
 
 module "spoke_network" {
   source              = "CiscoDevNet/secure-firewall/aws//modules/network"
   vpc_name            = var.spoke_vpc_name
-  vpc_cidr            = var.spoke_vpc_cidr
   create_igw          = var.spoke_create_igw
   igw_name            = var.spoke_igw_name
-  outside_subnet_cidr = var.spoke_subnet_cidr
   outside_subnet_name = var.spoke_subnet_name
 }
 
@@ -41,7 +39,6 @@ module "instance" {
   ftd_inside_interface    = module.service_network.inside_interface
   ftd_outside_interface   = module.service_network.outside_interface
   ftd_diag_interface      = module.service_network.diag_interface
-  create_fmc              = var.create_fmc
   fmc_nat_id              = var.fmc_nat_id
 }
 
@@ -58,9 +55,10 @@ module "gwlbe" {
   source            = "CiscoDevNet/secure-firewall/aws//modules/gwlbe"
   gwlbe_subnet_cidr = var.gwlbe_subnet_cidr
   gwlbe_subnet_name = var.gwlbe_subnet_name
-  vpc_id            = module.service_network.vpc_id
+  vpc_id            = module.spoke_network.vpc_id
   ngw_id            = module.nat_gw.ngw
   gwlb              = module.gwlb.gwlb
+  spoke_rt_id       = module.spoke_network.outside_rt_id
   spoke_subnet      = module.spoke_network.outside_subnet
 }
 
@@ -69,29 +67,10 @@ module "nat_gw" {
   ngw_subnet_cidr         = var.ngw_subnet_cidr
   ngw_subnet_name         = var.ngw_subnet_name
   availability_zone_count = var.availability_zone_count
-  vpc_id                  = module.service_network.vpc_id
-  internet_gateway        = module.service_network.internet_gateway[0]
+  vpc_id                  = module.spoke_network.vpc_id
+  internet_gateway        = module.spoke_network.internet_gateway[0]
   spoke_subnet_cidr       = module.spoke_network.outside_subnet_cidr
   gwlb_endpoint_id        = module.gwlbe.gwlb_endpoint_id
-  is_cdfmc                = var.is_cdfmc
-  mgmt_rt_id              = module.service_network.mgmt_rt_id
-}
-
-module "transitgateway" {
-  source                      = "CiscoDevNet/secure-firewall/aws//modules/transitgateway"
-  create_tgw                  = var.create_tgw
-  vpc_service_id              = module.service_network.vpc_id
-  vpc_spoke_id                = module.spoke_network.vpc_id
-  tgw_subnet_cidr             = var.tgw_subnet_cidr
-  tgw_subnet_name             = var.tgw_subnet_name
-  vpc_spoke_cidr              = module.spoke_network.vpc_cidr
-  spoke_subnet_id             = module.spoke_network.outside_subnet
-  spoke_rt_id                 = module.spoke_network.outside_rt_id
-  gwlbe                       = module.gwlbe.gwlb_endpoint_id
-  transit_gateway_name        = var.transit_gateway_name
-  availability_zone_count     = var.availability_zone_count
-  nat_subnet_routetable_ids   = module.nat_gw.nat_rt_id
-  gwlbe_subnet_routetable_ids = module.gwlbe.gwlbe_rt_id
 }
 
 #--------------------------------------------------------------------
@@ -101,17 +80,20 @@ module "transitgateway" {
 ################################################################################################
 
 resource "time_sleep" "wait_for_ftd" {
-  depends_on = [module.transitgateway, module.service_network, module.gwlb, module.gwlbe, module.instance]
+  depends_on = [module.spoke_network, module.service_network, module.gwlb, module.gwlbe, module.instance]
 
   create_duration = "6m"
 }
 
 
+#--------------------------------------------------------------------
+# FMC Configuration
+#--------------------------------------------------------------------
+
 ################################################################################################
 # Data blocks
 ################################################################################################
 data "fmc_port_objects" "http" {
-  depends_on = [fmc_smart_license.license]
   name = "HTTP"
 }
 data "fmc_port_objects" "ssh" {
@@ -135,12 +117,13 @@ data "fmc_device_physical_interfaces" "one_physical_interface" {
 # Resource blocks
 ################################################################################################
 resource "fmc_security_zone" "inside" {
-  depends_on     = [time_sleep.wait_for_ftd]
+  # depends_on     = [time_sleep.wait_600_seconds]
+  depends_on     = [fmc_smart_license.license]
   name           = "inside"
   interface_mode = "ROUTED"
 }
 resource "fmc_security_zone" "outside" {
-  depends_on     = [time_sleep.wait_for_ftd]
+  # depends_on     = [time_sleep.wait_600_seconds]
   name           = "outside"
   interface_mode = "ROUTED"
 }
@@ -155,7 +138,7 @@ resource "fmc_host_objects" "aws_meta" {
 resource "fmc_host_objects" "inside_gw" {
   count = var.inscount
   name  = "inside-gateway${count.index + 1}"
-  value = var.inside_gw_ips[count.index]
+  value = var.ftd_inside_gw[count.index]
 }
 
 resource "fmc_smart_license" "license" {
@@ -163,7 +146,7 @@ resource "fmc_smart_license" "license" {
 }
 
 resource "fmc_access_policies" "access_policy" {
-  name                              = "Terraform Access Policy"
+  name                              = "GWLB-ACP"
   default_action                    = "BLOCK"
   default_action_send_events_to_fmc = "true"
   default_action_log_end            = "true"
@@ -245,12 +228,12 @@ resource "fmc_devices" "device1" {
   }
 }
 resource "fmc_devices" "device2" {
-  depends_on   = [fmc_devices.device1]
+  depends_on   = [fmc_smart_license.license, fmc_devices.device1]
   name         = "FTD2"
   hostname     = module.service_network.mgmt_interface_ip[1]
   regkey       = "cisco"
   license_caps = ["MALWARE"]
-  nat_id       = "cisco"
+  nat_id       = var.fmc_nat_id
   access_policy {
     id   = fmc_access_policies.access_policy.id
     type = fmc_access_policies.access_policy.type

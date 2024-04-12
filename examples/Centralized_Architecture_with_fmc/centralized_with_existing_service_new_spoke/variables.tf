@@ -22,7 +22,7 @@ variable "create_fmc" {
 variable "service_vpc_name" {
   type        = string
   description = "Service VPC Name"
-  default     = "Cisco-FMCv"
+  default     = "service-vpc"
 }
 
 variable "service_vpc_cidr" {
@@ -276,12 +276,6 @@ variable "gwlb_name" {
   type        = string
   description = "name for Gateway loadbalancer"
   default     = "GWLB"
-}
-
-variable "gwlb_tg_name" {
-  type = string
-  description = "GWLB target group name"
-  default = "gwlb-tg"
 }
 
 variable "transit_gateway_name" {

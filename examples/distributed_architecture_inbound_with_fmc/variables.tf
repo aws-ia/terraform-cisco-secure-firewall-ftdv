@@ -1,11 +1,13 @@
 variable "aws_access_key" {
   type        = string
   description = "AWS ACCESS KEY"
+  default     = ""
 }
 
 variable "aws_secret_key" {
   type        = string
   description = "AWS SECRET KEY"
+  default     = ""
 }
 variable "region" {
   type        = string
@@ -13,22 +15,10 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "create_fmc" {
-  type = bool
-  description = "condition to create fmc or not"
-  default = false
-}
-
 variable "service_vpc_name" {
   type        = string
   description = "Service VPC Name"
-  default     = "Cisco-FMCv"
-}
-
-variable "service_vpc_cidr" {
-  type = string
-  description = "service vpc CIDR"
-  default = ""
+  default     = "service-vpc"
 }
 
 variable "service_create_igw" {
@@ -44,7 +34,7 @@ variable "service_igw_name" {
 }
 
 variable "mgmt_subnet_cidr" {
-  description = "List of management Subnet CIDR . "
+  description = "List out management Subnet CIDR . "
   type        = list(string)
   default     = ["172.16.220.0/24", "172.16.210.0/24"]
 }
@@ -67,16 +57,16 @@ variable "inside_subnet_cidr" {
   default     = ["172.16.29.0/24", "172.16.190.0/24"]
 }
 
+variable "ftd_inside_gw" {
+  description = "Inside subnet Gateway"
+  type        = list(string)
+  default     = ["172.16.29.1", "172.16.190.1"]
+}
+
 variable "fmc_ip" {
   description = "List out FMCv IPs . "
   type        = string
   default     = ""
-}
-
-variable "tgw_subnet_cidr" {
-  type        = list(string)
-  description = "List of Transit GW Subnet CIDR"
-  default     = []
 }
 
 variable "availability_zone_count" {
@@ -107,12 +97,6 @@ variable "inside_subnet_name" {
   type        = list(string)
   description = "Specified inside subnet names"
   default     = ["inside1", "inside2"]
-}
-
-variable "tgw_subnet_name" {
-  type        = list(string)
-  description = "List of name for TGW Subnets"
-  default     = ["tgw1", "tgw2"]
 }
 
 variable "outside_interface_sg" {
@@ -176,7 +160,7 @@ variable "mgmt_interface_sg" {
       from_port   = 8305
       protocol    = "TCP"
       to_port     = 8305
-      cidr_blocks = ["172.16.220.0/24", "172.16.210.0/24", "172.16.0.0/24"]
+      cidr_blocks = ["0.0.0.0/0"]
       description = "Mgmt Traffic from FMC"
     }
   ]
@@ -195,13 +179,13 @@ variable "instances_per_az" {
 variable "spoke_vpc_cidr" {
   type        = string
   description = "Specified CIDR for VPC . "
-  default     = ""
+  default     = "10.6.0.0/16"
 }
 
 variable "spoke_vpc_name" {
   type        = string
   description = "Specified VPC Name . "
-  default     = "spoke-vpc"
+  default     = "dai-spoke-vpc"
 }
 
 variable "spoke_create_igw" {
@@ -213,13 +197,13 @@ variable "spoke_create_igw" {
 variable "spoke_igw_name" {
   description = "name of existing IGW to be used"
   type        = string
-  default     = "spoke-igw"
+  default     = ""
 }
 
 variable "spoke_subnet_cidr" {
   type        = list(string)
   description = "List out spoke Subnet CIDR . "
-  default     = []
+  default     = ["10.6.1.0/24", "10.6.2.0/24"]
 }
 
 variable "spoke_subnet_name" {
@@ -231,25 +215,13 @@ variable "spoke_subnet_name" {
 variable "gwlbe_subnet_cidr" {
   type        = list(string)
   description = "List out GWLBE Subnet CIDR . "
-  default     = []
+  default     = ["10.6.10.0/24", "10.6.20.0/24"]
 }
 
 variable "gwlbe_subnet_name" {
   type        = list(string)
   description = "List out GWLBE Subnet names . "
-  default     = ["gwlb1", "gwlb2"]
-}
-
-variable "ngw_subnet_cidr" {
-  type        = list(string)
-  description = "List out NGW Subnet CIDR . "
   default     = []
-}
-
-variable "ngw_subnet_name" {
-  type        = list(string)
-  description = "List out NGW Subnet names . "
-  default     = ["ngw1", "ngw2"]
 }
 
 ########################################################################
@@ -265,7 +237,6 @@ variable "ftd_size" {
 variable "keyname" {
   type        = string
   description = "key to be used for the instances"
-  default     = "ln"
 }
 
 ########################################################################
@@ -275,7 +246,7 @@ variable "keyname" {
 variable "gwlb_name" {
   type        = string
   description = "name for Gateway loadbalancer"
-  default     = "GWLB"
+  default     = "dai-GWLB"
 }
 
 variable "gwlb_tg_name" {
@@ -284,61 +255,70 @@ variable "gwlb_tg_name" {
   default = "gwlb-tg"
 }
 
-variable "transit_gateway_name" {
-  type        = string
-  description = "Name of the Transit Gateway created"
-  default     = null
-}
-
 variable "use_ftd_eip" {
   description = "boolean value to use EIP on FTD or not"
+  type        = bool
+  default     = true
+}
+
+variable "use_fmc_eip" {
+  description = "boolean value to use EIP on FMC or not"
   type        = bool
   default     = false
 }
 
 variable "ftd_version" {
-  type        = string
-  default     = "ftdv-7.3.0"
-  description = "Version of the FTD to be deployed"
+  type    = string
+  default = "ftdv-7.3.0"
+  description = "FTD version"
 }
 
-variable "fmc_username" {
-  type        = string
-  description = "FMC Username for API access"
+variable "fmc_version" {
+  type    = string
+  default = "fmcv-7.3.0"
+  description = "FMC version"
 }
 
-variable "fmc_password" {
-  type        = string
-  description = "FMC User Password for API access"
-}
-
-variable "create_tgw" {
+variable "create_fmc" {
+  description = "Boolean value to create FMC or not"
   type        = bool
-  description = "Boolean value to decide if transit gateway needs to be created"
   default     = true
 }
 
-variable "is_cdfmc" {
-  type        = bool
-  default     = false
-  description = "Boolean value to decide if target fmc is cdfmc or not"
+variable "fmc_username" {
+  type    = string
+  default = "admin"
+  description = "FMC username"
 }
 
-variable "fmc_nat_id" {
+variable "fmc_password" {
+  type    = string
+  default = "Cisco@123"
+  description = "FMC admin password"
+}
+
+variable "inbound" {
+  type    = bool
+  default = true
+  description = "direction of traffic flow"
+}
+
+variable "service_vpc_cidr" {
   type        = string
-  description = "FMC Registration NAT ID"
-  default     = "cisco"
-}
-
-variable "fmc_host" {
-  type = string
-  description = "fmc public IP"
+  description = "Define CIDR to create a VPC"
+  default     = ""
 }
 
 variable "inscount" {
+  type    = number
   default = 2
   description = "FTD instance count"
-  type = number
+}
+
+variable "fmc_nat_id" {
+  type    = string
+  default = ""
+  description = "NAT GW ID"
 }
 
 variable "fmc_insecure_skip_verify" {
@@ -347,8 +327,20 @@ variable "fmc_insecure_skip_verify" {
   description = "Condition to verify fmc certificate"
 }
 
-variable "inside_gw_ips" {
+variable "fmc_mgmt_interface" {
+  type    = string
+  default = ""
+  description = "FMC mgmt interface id"
+}
+
+variable "ftd_mgmt_interface_ips" {
   type    = list(string)
-  description = "Inside subnet gateway IP"
-  default = ["172.16.29.1", "172.16.190.1"]
+  default = []
+  description = "FTD mgmt interface IPs"
+}
+
+variable "fmc_host" {
+  type    = string
+  default = ""
+  description = "FMC public ip"
 }
