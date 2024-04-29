@@ -1,6 +1,6 @@
 module "service_network" {
   source               = "CiscoDevNet/secure-firewall/aws//modules/network"
-  version              = "1.0.19"
+  version              = "1.0.20"
   vpc_name             = var.service_vpc_name
   vpc_cidr             = var.service_vpc_cidr
   create_igw           = var.service_create_igw
@@ -22,7 +22,7 @@ module "service_network" {
 
 module "spoke_network" {
   source              = "CiscoDevNet/secure-firewall/aws//modules/network"
-  version             = "1.0.19"
+  version             = "1.0.20"
   vpc_name            = var.spoke_vpc_name
   vpc_cidr            = var.spoke_vpc_cidr
   create_igw          = var.spoke_create_igw
@@ -33,7 +33,7 @@ module "spoke_network" {
 
 module "instance" {
   source                  = "CiscoDevNet/secure-firewall/aws//modules/firewall_instance"
-  version                 = "1.0.19"
+  version                 = "1.0.20"
   ftd_version             = var.ftd_version
   keyname                 = var.keyname
   ftd_size                = var.ftd_size
@@ -51,7 +51,7 @@ module "instance" {
 
 module "gwlb" {
   source      = "CiscoDevNet/secure-firewall/aws//modules/gwlb"
-  version     = "1.0.19"
+  version     = "1.0.20"
   gwlb_name   = var.gwlb_name
   gwlb_tg_name = var.gwlb_tg_name
   gwlb_subnet = module.service_network.outside_subnet
@@ -61,7 +61,7 @@ module "gwlb" {
 
 module "gwlbe" {
   source            = "CiscoDevNet/secure-firewall/aws//modules/gwlbe"
-  version           = "1.0.19"
+  version           = "1.0.20"
   gwlbe_subnet_cidr = var.gwlbe_subnet_cidr
   gwlbe_subnet_name = var.gwlbe_subnet_name
   vpc_id            = module.service_network.vpc_id
@@ -72,7 +72,7 @@ module "gwlbe" {
 
 module "nat_gw" {
   source                  = "CiscoDevNet/secure-firewall/aws//modules/nat_gw"
-  version                 = "1.0.19"
+  version                 = "1.0.20"
   ngw_subnet_cidr         = var.ngw_subnet_cidr
   ngw_subnet_name         = var.ngw_subnet_name
   availability_zone_count = var.availability_zone_count
@@ -86,7 +86,7 @@ module "nat_gw" {
 
 module "transitgateway" {
   source                      = "CiscoDevNet/secure-firewall/aws//modules/transitgateway"
-  version                     = "1.0.19"
+  version                     = "1.0.20"
   create_tgw                  = var.create_tgw
   vpc_service_id              = module.service_network.vpc_id
   vpc_spoke_id                = module.spoke_network.vpc_id
