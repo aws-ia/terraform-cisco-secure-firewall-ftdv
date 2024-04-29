@@ -22,7 +22,7 @@ variable "create_fmc" {
 variable "service_vpc_name" {
   type        = string
   description = "Service VPC Name"
-  default     = "Cisco-FMCv"
+  default     = "service-vpc"
 }
 
 variable "service_vpc_cidr" {
@@ -268,12 +268,6 @@ variable "keyname" {
   default     = "ln"
 }
 
-variable "block_encrypt" {
-  description = "boolean value to encrypt block or not"
-  default = false
-  type = bool 
-}
-
 ########################################################################
 ## GatewayLoadbalncer 
 ########################################################################
@@ -282,12 +276,6 @@ variable "gwlb_name" {
   type        = string
   description = "name for Gateway loadbalancer"
   default     = "GWLB"
-}
-
-variable "gwlb_tg_name" {
-  type = string
-  description = "GWLB target group name"
-  default = "gwlb-tg"
 }
 
 variable "transit_gateway_name" {
@@ -357,16 +345,4 @@ variable "inside_gw_ips" {
   type    = list(string)
   description = "Inside subnet gateway IP"
   default = ["172.16.29.1", "172.16.190.1"]
-}
-
-variable "reg_key" {
-  type = string
-  description = "FTD registrtion key"
-  default = "cisco"
-}
-
-variable "tags" {
-  type = string
-  description = "FTD tags"
-  default = "FTD"
 }
