@@ -1,6 +1,5 @@
 module "service_network" {
-  source               = "CiscoDevNet/secure-firewall/aws//modules/network"
-  version              = "1.0.20"
+  source               = "CiscoDevNet/secure-firewall/aws//modules/network/latest"
   vpc_name             = var.service_vpc_name
   vpc_cidr             = var.service_vpc_cidr
   create_igw           = var.service_create_igw
@@ -21,8 +20,7 @@ module "service_network" {
 }
 
 module "spoke_network" {
-  source              = "CiscoDevNet/secure-firewall/aws//modules/network"
-  version             = "1.0.20"
+  source              = "CiscoDevNet/secure-firewall/aws//modules/network/latest"
   vpc_name            = var.spoke_vpc_name
   vpc_cidr            = var.spoke_vpc_cidr
   create_igw          = var.spoke_create_igw
@@ -32,8 +30,7 @@ module "spoke_network" {
 }
 
 module "instance" {
-  source                  = "CiscoDevNet/secure-firewall/aws//modules/firewall_instance"
-  version                 = "1.0.20"
+  source                  = "CiscoDevNet/secure-firewall/aws//modules/firewall_instance/latest"
   ftd_version             = var.ftd_version
   keyname                 = var.keyname
   ftd_size                = var.ftd_size
@@ -50,8 +47,7 @@ module "instance" {
 }
 
 module "gwlb" {
-  source      = "CiscoDevNet/secure-firewall/aws//modules/gwlb"
-  version     = "1.0.20"
+  source      = "CiscoDevNet/secure-firewall/aws//modules/gwlb/latest"
   gwlb_name   = var.gwlb_name
   gwlb_tg_name = var.gwlb_tg_name
   gwlb_subnet = module.service_network.outside_subnet
@@ -60,8 +56,7 @@ module "gwlb" {
 }
 
 module "gwlbe" {
-  source            = "CiscoDevNet/secure-firewall/aws//modules/gwlbe"
-  version           = "1.0.20"
+  source            = "CiscoDevNet/secure-firewall/aws//modules/gwlbe/latest"
   gwlbe_subnet_cidr = var.gwlbe_subnet_cidr
   gwlbe_subnet_name = var.gwlbe_subnet_name
   vpc_id            = module.service_network.vpc_id
@@ -71,8 +66,7 @@ module "gwlbe" {
 }
 
 module "nat_gw" {
-  source                  = "CiscoDevNet/secure-firewall/aws//modules/nat_gw"
-  version                 = "1.0.20"
+  source                  = "CiscoDevNet/secure-firewall/aws//modules/nat_gw/latest"
   ngw_subnet_cidr         = var.ngw_subnet_cidr
   ngw_subnet_name         = var.ngw_subnet_name
   availability_zone_count = var.availability_zone_count
@@ -85,8 +79,7 @@ module "nat_gw" {
 }
 
 module "transitgateway" {
-  source                      = "CiscoDevNet/secure-firewall/aws//modules/transitgateway"
-  version                     = "1.0.20"
+  source                      = "CiscoDevNet/secure-firewall/aws//modules/transitgateway/latest"
   create_tgw                  = var.create_tgw
   vpc_service_id              = module.service_network.vpc_id
   vpc_spoke_id                = module.spoke_network.vpc_id
@@ -104,6 +97,7 @@ module "transitgateway" {
 
 #--------------------------------------------------------------------
 
+
 ################################################################################################
 # Time Sleep blocks
 ################################################################################################
@@ -114,12 +108,10 @@ resource "time_sleep" "wait_for_ftd" {
   create_duration = "6m"
 }
 
-
 ################################################################################################
 # Data blocks
 ################################################################################################
 data "fmc_port_objects" "http" {
-  depends_on = [fmc_smart_license.license]
   name = "HTTP"
 }
 data "fmc_port_objects" "ssh" {
@@ -241,29 +233,36 @@ resource "fmc_ftd_manualnat_rules" "new_rule" {
   interface_in_translated_source    = true
 }
 
-resource "fmc_devices" "device1" {
-  depends_on   = [fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside,fmc_smart_license.license]
-  name         = "FTD1"
-  hostname     = module.service_network.mgmt_interface_ip[0]
-  regkey       = "cisco"
-  license_caps = ["MALWARE"]
-  nat_id       = var.fmc_nat_id
-  access_policy {
-    id   = fmc_access_policies.access_policy.id
-    type = fmc_access_policies.access_policy.type
-  }
+resource "fmc_devices" "device1"{
+depends_on   = [fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside]
+name = "FTD1"
+hostname = module.service_network.aws_ftd_eip[0]
+regkey = "cisco"
+nat_id = var.fmc_nat_id
+performance_tier = "FTDv50"
+license_caps = [ "MALWARE"]
+access_policy {
+  id   = fmc_access_policies.access_policy.id
+  type = fmc_access_policies.access_policy.type
 }
-resource "fmc_devices" "device2" {
-  depends_on   = [fmc_devices.device1]
-  name         = "FTD2"
-  hostname     = module.service_network.mgmt_interface_ip[1]
-  regkey       = "cisco"
-  license_caps = ["MALWARE"]
-  nat_id       = "cisco"
-  access_policy {
-    id   = fmc_access_policies.access_policy.id
-    type = fmc_access_policies.access_policy.type
-  }
+cdo_host = "www.apj.cdo.cisco.com"
+cdo_region = "apj"
+}
+
+resource "fmc_devices" "device2"{
+depends_on   = [fmc_devices.device1]
+name = "FTD2"
+hostname = module.service_network.aws_ftd_eip[1]
+regkey = "cisco"
+nat_id = var.fmc_nat_id
+performance_tier = "FTDv50"
+license_caps = [ "MALWARE"]
+access_policy {
+  id   = fmc_access_policies.access_policy.id
+  type = fmc_access_policies.access_policy.type
+}
+cdo_host = "www.apj.cdo.cisco.com"
+cdo_region = "apj"
 }
 ##############################
 #Intermediate data block for devices

@@ -6,7 +6,7 @@ terraform {
     }
     fmc = {
       source = "CiscoDevNet/fmc"
-      version = "<= 1.4.8"
+      version = "1.4.8"
     }
     time = {
       source = "hashicorp/time"
@@ -22,8 +22,9 @@ provider "aws" {
 }
 
 provider "fmc" {
-  fmc_username             = var.fmc_username
-  fmc_password             = var.fmc_password
-  fmc_host                 = var.fmc_host
-  fmc_insecure_skip_verify = var.fmc_insecure_skip_verify
+is_cdfmc = true
+cdo_token = var.token
+fmc_host = var.fmc_host
+cdfmc_domain_uuid = var.cdfmc_domain_uuid
+fmc_insecure_skip_verify = var.fmc_insecure_skip_verify
 }

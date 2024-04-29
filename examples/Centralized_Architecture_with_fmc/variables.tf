@@ -271,7 +271,7 @@ variable "keyname" {
 variable "block_encrypt" {
   description = "boolean value to encrypt block or not"
   default = false
-  type = bool 
+  type = bool
 }
 
 ########################################################################
@@ -304,7 +304,7 @@ variable "use_ftd_eip" {
 
 variable "ftd_version" {
   type        = string
-  default     = "ftdv-7.3.0"
+  default     = "ftdv-7.4.1"
   description = "Version of the FTD to be deployed"
 }
 
