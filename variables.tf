@@ -358,15 +358,3 @@ variable "inside_gw_ips" {
   description = "Inside subnet gateway IP"
   default = ["172.16.29.1", "172.16.190.1"]
 }
-
-variable "reg_key" {
-  type = string
-  description = "FTD registrtion key"
-  default = "cisco"
-}
-
-variable "tags" {
-  type = string
-  description = "FTD tags"
-  default = "FTD"
-}
