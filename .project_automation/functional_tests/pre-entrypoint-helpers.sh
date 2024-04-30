@@ -7,10 +7,6 @@ PROJECT_TYPE_PATH=${BASE_PATH}/projecttype
 
 cd ${PROJECT_PATH}
 
-#********** MAKEFILE *************
-echo "Build the lambda function packages"
-make all
-
 #********** Get tfvars from SSM 1 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
@@ -101,16 +97,6 @@ aws ssm get-parameter \
   --output "text" \
   --region "us-east-1" >> t12.tfvars
 
-# #********** Checkov Analysis *************
-# echo "Running Checkov Analysis on root module"
-# checkov --directory . --skip-path examples --framework terraform
-
-# echo "Running Checkov Analysis on terraform plan"
-# terraform init
-# terraform plan -out tf.plan -var-file functional_test.tfvars
-# terraform show -json tf.plan  > tf.json 
-# checkov 
-
 # #********** Terratest execution **********
 echo "Running Terratest"
 export GOPROXY=https://goproxy.io,direct
@@ -120,10 +106,3 @@ go mod init github.com/aws-ia/terraform-project-ephemeral
 go mod tidy
 go install github.com/gruntwork-io/terratest/modules/terraform
 go test -timeout 45m
-
-#********** CLEANUP *************
-echo "Cleaning up all temp files and artifacts"
-cd ${PROJECT_PATH}
-make clean
-
-echo "End of Functional Tests"
