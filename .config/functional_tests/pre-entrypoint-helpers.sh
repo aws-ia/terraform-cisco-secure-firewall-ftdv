@@ -10,7 +10,7 @@ cd ${PROJECT_PATH}
 #********** Get tfvars from SSM 1 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "distributed_inbound/t1.tfvars" \
+  --name "/distributed_inbound/t1.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -19,7 +19,7 @@ aws ssm get-parameter \
   #********** Get tfvars from SSM 2 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "distributed_inbound/t2.tfvars" \
+  --name "/distributed_inbound/t2.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -28,7 +28,7 @@ aws ssm get-parameter \
   #********** Get tfvars from SSM 3 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "distributed_outbound/t3.tfvars" \
+  --name "/distributed_outbound/t3.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -37,7 +37,7 @@ aws ssm get-parameter \
   #********** Get tfvars from SSM 4 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "distributed_outbound/t4.tfvars" \
+  --name "/distributed_outbound/t4.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -46,7 +46,7 @@ aws ssm get-parameter \
   #********** Get tfvars from SSM 5 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "existing_service_existing_spoke/t5.tfvars" \
+  --name "/existing_service_existing_spoke/t5.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -55,7 +55,7 @@ aws ssm get-parameter \
   #********** Get tfvars from SSM 6 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "existing_service_existing_spoke/t6.tfvars" \
+  --name "/existing_service_existing_spoke/t6.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -64,7 +64,7 @@ aws ssm get-parameter \
   #********** Get tfvars from SSM 7 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "existing_service_new_spoke/t7.tfvars" \
+  --name "/existing_service_new_spoke/t7.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -73,7 +73,7 @@ aws ssm get-parameter \
   #********** Get tfvars from SSM 8 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "existing_service_new_spoke/t8.tfvars" \
+  --name "/existing_service_new_spoke/t8.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -82,7 +82,7 @@ aws ssm get-parameter \
   #********** Get tfvars from SSM 9 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "multi_spoke/t11.tfvars" \
+  --name "/multi_spoke/t11.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
@@ -91,7 +91,7 @@ aws ssm get-parameter \
     #********** Get tfvars from SSM 10 *************
 echo "Get *.tfvars from SSM parameter"
 aws ssm get-parameter \
-  --name "multi_spoke/t12.tfvars" \
+  --name "/multi_spoke/t12.tfvars" \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
