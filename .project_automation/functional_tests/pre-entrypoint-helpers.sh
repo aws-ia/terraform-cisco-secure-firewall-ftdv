@@ -5,14 +5,7 @@
 PROJECT_PATH=${BASE_PATH}/project
 PROJECT_TYPE_PATH=${BASE_PATH}/projecttype
 
-echo "Starting Functional Tests"
-
 cd ${PROJECT_PATH}
-
-#********** TFC Env Vars *************
-# export AWS_DEFAULT_REGION=us-east-1
-# export TFE_TOKEN=`aws secretsmanager get-secret-value --secret-id abp/tfc/token | jq -r ".SecretString"`
-# export TF_TOKEN_app_terraform_io=`aws secretsmanager get-secret-value --secret-id abp/tfc/token | jq -r ".SecretString"`
 
 #********** MAKEFILE *************
 echo "Build the lambda function packages"
