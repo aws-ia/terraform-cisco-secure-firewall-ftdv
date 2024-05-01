@@ -16,13 +16,13 @@ func TestExistingServiceExistingSpoke(t *testing.T) {
 	terraDir1 := "./existing_spoke/."
 	terraformOptions1 := &terraform.Options{
 		TerraformDir: terraDir1,
-		VarFiles:     []string{"t5.tfvars"},
+		VarFiles:     []string{"../t5.tfvars"},
 	}
 
 	terraDir2 := "../examples/centralized_architecture_with_fmc"
 	terraformOptions2 := &terraform.Options{
 		TerraformDir: terraDir2,
-		VarFiles:     []string{"t6.tfvars"},
+		VarFiles:     []string{"../t6.tfvars"},
 	}
 
 	test_structure.RunTestStage(t, "build_fmc", func() {

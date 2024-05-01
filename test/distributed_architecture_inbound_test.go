@@ -13,7 +13,7 @@ func TestDistributedArchitectureInbound(t *testing.T) {
 	fmt.Println("Running test for Distributed Architecture Inbound...")
 
 	directory_path := "./distributed_inbound/."
-	tfvars_path := "t1.tfvars"
+	tfvars_path := "../t1.tfvars"
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: directory_path,
@@ -29,7 +29,7 @@ func TestDistributedArchitectureInbound(t *testing.T) {
 	})
 
 	fmc_config_dir_path := "../examples/distributed_architecture_inbound_with_fmc/."
-	tfvars_path2 := "t2.tfvars"
+	tfvars_path2 := "../t2.tfvars"
 
 	fmcConfigTerraformOptions := &terraform.Options{
 		TerraformDir: fmc_config_dir_path,

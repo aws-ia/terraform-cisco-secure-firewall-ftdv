@@ -13,7 +13,7 @@ func TestMultiSpoke(t *testing.T) {
 	fmt.Println("Running test for Multi Spoke Architecture...")
 
 	directory_path := "./multi_spoke/."
-	tfvars_path := "t11.tfvars"
+	tfvars_path := "../t11.tfvars"
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: directory_path,
@@ -29,7 +29,7 @@ func TestMultiSpoke(t *testing.T) {
 	})
 
 	fmc_config_dir_path := "../examples/multiple_spoke_with_fmc/."
-	tfvars_path2 := "t12.tfvars"
+	tfvars_path2 := "../t12.tfvars"
 
 	fmcConfigTerraformOptions := &terraform.Options{
 		TerraformDir: fmc_config_dir_path,
