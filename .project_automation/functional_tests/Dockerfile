@@ -6,4 +6,5 @@ RUN cd /tmp && \
 ENV GO_VERSION=1.22.1
 RUN cd /tmp && \
     wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz && \
-    tar -C /usr/local/bin -xzf go${GO_VERSION}.linux-amd64.tar.gz && chmod 755 /usr/local/bin/go
+    tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz 
+ENV PATH="/usr/local/go/bin:${PATH}"
