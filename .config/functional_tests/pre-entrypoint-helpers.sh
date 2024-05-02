@@ -101,7 +101,8 @@ aws ssm get-parameter \
 echo "Running Terratest"
 export GOPROXY=https://goproxy.io,direct
 cd test
-rm -f go.mod
+rm -f go.moda
+go env
 go mod init github.com/aws-ia/terraform-project-ephemeral
 go mod tidy
 go install github.com/gruntwork-io/terratest/modules/terraform
