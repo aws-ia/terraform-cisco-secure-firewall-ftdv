@@ -123,7 +123,7 @@ resource "aws_route_table_association" "mgmt_association" {
 
 resource "aws_eip" "fmc_mgmt_eip" {
   count = var.instances
-  vpc   = true
+  domain   = "vpc"
   tags = {
     "Name" = "${var.name_tag_prefix} Management IP%{if var.instances > 1} ${count.index}%{endif}"
   }

@@ -14,7 +14,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t1.tfvars
+  --region "us-east-1" > t1.tfvars
 
   #********** Get tfvars from SSM 2 *************
 echo "Get *.tfvars from SSM parameter"
@@ -23,7 +23,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t2.tfvars
+  --region "us-east-1" > t2.tfvars
 
   #********** Get tfvars from SSM 3 *************
 echo "Get *.tfvars from SSM parameter"
@@ -32,7 +32,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t3.tfvars
+  --region "us-east-1" > t3.tfvars
 
   #********** Get tfvars from SSM 4 *************
 echo "Get *.tfvars from SSM parameter"
@@ -41,7 +41,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t4.tfvars
+  --region "us-east-1" > t4.tfvars
 
   #********** Get tfvars from SSM 5 *************
 echo "Get *.tfvars from SSM parameter"
@@ -50,7 +50,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t5.tfvars
+  --region "us-east-1" > t5.tfvars
 
   #********** Get tfvars from SSM 6 *************
 echo "Get *.tfvars from SSM parameter"
@@ -59,7 +59,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t6.tfvars
+  --region "us-east-1" > t6.tfvars
 
   #********** Get tfvars from SSM 7 *************
 echo "Get *.tfvars from SSM parameter"
@@ -68,7 +68,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t7.tfvars
+  --region "us-east-1" > t7.tfvars
 
   #********** Get tfvars from SSM 8 *************
 echo "Get *.tfvars from SSM parameter"
@@ -77,7 +77,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t8.tfvars
+  --region "us-east-1" > t8.tfvars
 
   #********** Get tfvars from SSM 9 *************
 echo "Get *.tfvars from SSM parameter"
@@ -86,7 +86,7 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t11.tfvars
+  --region "us-east-1" > t11.tfvars
 
     #********** Get tfvars from SSM 10 *************
 echo "Get *.tfvars from SSM parameter"
@@ -95,14 +95,13 @@ aws ssm get-parameter \
   --with-decryption \
   --query "Parameter.Value" \
   --output "text" \
-  --region "us-east-1" >> t12.tfvars
+  --region "us-east-1" > t12.tfvars
 
 # #********** Terratest execution **********
 echo "Running Terratest"
 export GOPROXY=https://goproxy.io,direct
 cd test
-rm -f go.moda
-go env
+rm -f go.mod
 go mod init github.com/aws-ia/terraform-project-ephemeral
 go mod tidy
 go install github.com/gruntwork-io/terratest/modules/terraform
