@@ -43,6 +43,9 @@ resource "aws_subnet" "mgmt" {
 #################################################################################################################################
 # Security Group
 #################################################################################################################################
+data "external" "local_ip" {
+  program = ["bash", "-c", "echo {\\\"ip\\\":\\\"$(curl -s ifconfig.me)\\\"}"]
+}
 
 resource "aws_security_group" "allow_all" {
   name        = "Allow ftd"
@@ -54,6 +57,14 @@ resource "aws_security_group" "allow_all" {
     to_port     = 8305
     protocol    = "tcp"
     cidr_blocks = ["172.16.220.0/24", "172.16.210.0/24"]
+  }
+
+  ingress {
+    description      = "TLS from my IP"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["${data.external.local_ip.result.ip}/32"]
   }
 
   egress {

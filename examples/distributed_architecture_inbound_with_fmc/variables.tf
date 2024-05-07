@@ -275,13 +275,13 @@ variable "use_fmc_eip" {
 
 variable "ftd_version" {
   type    = string
-  default = "ftdv-7.3.0"
+  default = "ftdv-7.2.7"
   description = "FTD version"
 }
 
 variable "fmc_version" {
   type    = string
-  default = "fmcv-7.3.0"
+  default = "fmcv-7.2.7"
   description = "FMC version"
 }
 

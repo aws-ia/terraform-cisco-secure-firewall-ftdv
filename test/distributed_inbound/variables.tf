@@ -36,7 +36,7 @@ variable "instances" {
 }
 
 variable "fmc_version" {
-  default     = "fmcv-7.3.0"
+  default     = "fmcv-7.2.7"
   type = string
   description = "Version of the FMCv"
 }

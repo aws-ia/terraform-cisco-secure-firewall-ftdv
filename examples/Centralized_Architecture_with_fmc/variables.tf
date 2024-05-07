@@ -304,7 +304,7 @@ variable "use_ftd_eip" {
 
 variable "ftd_version" {
   type        = string
-  default     = "ftdv-7.4.1"
+  default     = "ftdv-7.2.7"
   description = "Version of the FTD to be deployed"
 }
 
