@@ -90,7 +90,7 @@ variable "hostname" {
   type = string
 }
 
-variable "key_name" {
+variable "keyname" {
   description = "AWS EC2 Key"
   default = "ln"
   type = string

@@ -32,7 +32,24 @@ func TestExistingServiceNewSpoke(t *testing.T) {
 		test_structure.SaveTerraformOptions(t, terraDir1, terraformOptions1)
 
 		// Triggers the terraform init and terraform apply commandåç
-		terraform.InitAndApply(t, terraformOptions1)
+		// Initialize and apply Terraform configuration
+		output, err := terraform.InitAndApplyE(t, terraformOptions1)
+		if err != nil {
+			fmt.Println("Error during Terraform apply:", err)
+
+			// Attempt to destroy resources if there was an error
+			destroyOutput, destroyErr := terraform.DestroyE(t, terraformOptions1)
+			if destroyErr != nil {
+				fmt.Println("Error during Terraform destroy:", destroyErr)
+			} else {
+				fmt.Println("Terraform destroy completed successfully. Output:", destroyOutput)
+			}
+
+			// Fail the test if there was an error during apply
+			t.FailNow()
+		} else {
+			fmt.Println("Terraform apply completed successfully. Output:", output)
+		}
 
 	})
 
@@ -57,7 +74,30 @@ func TestExistingServiceNewSpoke(t *testing.T) {
 		test_structure.SaveTerraformOptions(t, terraDir2, terraformOptions2)
 
 		// Triggers the terraform init and terraform apply command
-		terraform.InitAndApply(t, terraformOptions2)
+		// Initialize and apply Terraform configuration
+		output, err := terraform.InitAndApplyE(t, terraformOptions2)
+		if err != nil {
+			fmt.Println("Error during Terraform apply:", err)
+
+			// Attempt to destroy resources if there was an error
+			destroyOutput, destroyErr := terraform.DestroyE(t, terraformOptions2)
+			if destroyErr != nil {
+				fmt.Println("Error during Terraform destroy:", destroyErr)
+			} else {
+				fmt.Println("Terraform destroy completed successfully. Output:", destroyOutput)
+			}
+			destroyOutput2, destroyErr2 := terraform.DestroyE(t, terraformOptions1)
+			if destroyErr != nil {
+				fmt.Println("Error during Terraform destroy of fmc:", destroyErr2)
+			} else {
+				fmt.Println("Terraform destroy of fmc completed successfully. Output:", destroyOutput2)
+			}
+
+			// Fail the test if there was an error during apply
+			t.FailNow()
+		} else {
+			fmt.Println("centralized_architecture_with_fmc_new_spoke completed successfully. Output:", output)
+		}
 	})
 
 	// go test -v test/main_test.go -timeout 60m

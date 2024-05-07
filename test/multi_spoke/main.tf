@@ -45,15 +45,15 @@ resource "aws_subnet" "mgmt" {
 #################################################################################################################################
 
 resource "aws_security_group" "allow_all" {
-  name        = "Allow All"
-  description = "Allow all traffic"
+  name        = "Allow ftd"
+  description = "Allow ftd to fmc traffic"
   vpc_id      = var.vpc_id != "" ? var.vpc_id : aws_vpc.fmc_vpc[0].id
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 8305
+    to_port     = 8305
+    protocol    = "tcp"
+    cidr_blocks = ["172.16.220.0/24", "172.16.210.0/24"]
   }
 
   egress {

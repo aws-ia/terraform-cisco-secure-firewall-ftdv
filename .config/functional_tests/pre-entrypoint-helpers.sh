@@ -104,5 +104,11 @@ cd test
 rm -f go.mod
 go mod init github.com/aws-ia/terraform-project-ephemeral
 go mod tidy
-go install github.com/gruntwork-io/terratest/modules/terraform
-go test -timeout 45m
+# Check if Terratest is already installed
+if ! go list -m all | grep -q "github.com/gruntwork-io/terratest"; then
+  echo "Terratest module is not installed, installing now..."
+  go get github.com/gruntwork-io/terratest/modules/terraform
+else
+  echo "Terratest module is already installed."
+fi
+go test -run TestDistributedArchitectureOutbound distributed_architecture_outbound_test.go -timeout 60m

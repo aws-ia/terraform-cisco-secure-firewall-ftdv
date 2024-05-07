@@ -3,7 +3,7 @@
 ##################################################################################################################################
 
 output "fmcv_eip" {
-  value = aws_eip.fmc-mgmt-eip[*].public_ip
+  value = aws_eip.fmc_mgmt_eip[*].public_ip
   description = "FMC public ip"
 }
 

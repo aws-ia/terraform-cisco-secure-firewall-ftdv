@@ -45,15 +45,15 @@ resource "aws_subnet" "mgmt" {
 #################################################################################################################################
 
 resource "aws_security_group" "allow_all" {
-  name        = "Allow All"
-  description = "Allow all traffic"
+  name        = "Allow ftd"
+  description = "Allow ftd to fmc traffic"
   vpc_id      = var.vpc_id != "" ? var.vpc_id : aws_vpc.fmc_vpc[0].id
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 8305
+    to_port     = 8305
+    protocol    = "tcp"
+    cidr_blocks = ["172.16.220.0/24", "172.16.210.0/24"]
   }
 
   egress {
@@ -123,7 +123,7 @@ resource "aws_route_table_association" "mgmt_association" {
 
 resource "aws_eip" "fmc_mgmt_eip" {
   count = var.instances
-  domain   = "vpc"
+  vpc   = true
   tags = {
     "Name" = "${var.name_tag_prefix} Management IP%{if var.instances > 1} ${count.index}%{endif}"
   }
@@ -160,7 +160,7 @@ resource "aws_instance" "fmcv" {
   count         = var.instances
   ami           = data.aws_ami.fmcv.id
   instance_type = var.fmc_size
-  key_name      = var.key_name
+  key_name      = var.keyname
 
 
   network_interface {
