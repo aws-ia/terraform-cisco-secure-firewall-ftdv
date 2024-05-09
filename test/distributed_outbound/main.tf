@@ -160,13 +160,8 @@ file_permission = 0700
 }
 
 resource "aws_key_pair" "deployer" {
-  count      = length(data.aws_key_pair.existing.ids) == 0 ? 1 : 0
   key_name   = var.keyname
   public_key = tls_private_key.key_pair.public_key_openssh
-}
-
-data "aws_key_pair" "existing" {
-  key_name = var.keyname
 }
 
 ##################################################################################################################################
