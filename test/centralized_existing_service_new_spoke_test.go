@@ -19,7 +19,7 @@ func TestExistingServiceNewSpoke(t *testing.T) {
 		VarFiles:     []string{"../../t7.tfvars"},
 	}
 
-	terraDir2 := "../examples/centralized_architecture_with_fmc"
+	terraDir2 := "../examples/Centralized_Architecture_with_fmc"
 	terraformOptions2 := &terraform.Options{
 		TerraformDir: terraDir2,
 		VarFiles:     []string{"../../t8.tfvars"},
