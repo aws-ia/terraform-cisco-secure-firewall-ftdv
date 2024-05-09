@@ -218,7 +218,7 @@ resource "fmc_ftd_manualnat_rules" "new_rule" {
 }
 
 resource "fmc_devices" "device1" {
-  depends_on   = [fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside,fmc_smart_license.license]
+  depends_on   = [time_sleep.wait_for_ftd, fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside,fmc_smart_license.license]
   name         = "FTD1"
   hostname     = module.service_network.mgmt_interface_ip[0]
   regkey       = "cisco"

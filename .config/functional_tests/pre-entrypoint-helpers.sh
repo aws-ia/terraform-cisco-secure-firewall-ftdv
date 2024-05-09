@@ -111,5 +111,5 @@ if ! go list -m all | grep -q "github.com/gruntwork-io/terratest"; then
 else
   echo "Terratest module is already installed."
 fi
-go test -timeout 60m
+go test -timeout 360m
 #go test -run TestDistributedArchitectureInbound distributed_architecture_inbound_test.go -timeout 70m -v

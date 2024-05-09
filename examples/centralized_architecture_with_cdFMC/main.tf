@@ -234,7 +234,7 @@ resource "fmc_ftd_manualnat_rules" "new_rule" {
 }
 
 resource "fmc_devices" "device1"{
-depends_on   = [fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside]
+depends_on   = [time_sleep.wait_for_ftd, fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside]
 name = "FTD1"
 hostname = module.service_network.aws_ftd_eip[0]
 regkey = "cisco"
