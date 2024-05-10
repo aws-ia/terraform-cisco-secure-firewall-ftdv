@@ -350,3 +350,13 @@ variable "fmc_host" {
   default = ""
   description = "FMC public ip"
 }
+
+variable "reg_key" {
+  type = string
+  description = "FTD registration key"
+}
+
+variable "ftd_admin_password" {
+  type = string
+  description = "FTD Admin password"
+}

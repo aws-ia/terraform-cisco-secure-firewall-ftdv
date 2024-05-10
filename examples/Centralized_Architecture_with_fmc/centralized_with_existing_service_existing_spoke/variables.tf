@@ -346,3 +346,13 @@ variable "inside_gw_ips" {
   description = "Inside subnet gateway IP"
   default = ["172.16.29.1", "172.16.190.1"]
 }
+
+variable "reg_key" {
+  type = string
+  description = "FTD registration key"
+}
+
+variable "ftd_admin_password" {
+  type = string
+  description = "FTD Admin password"
+}
