@@ -44,7 +44,7 @@ resource "aws_subnet" "mgmt" {
 # Security Group
 #################################################################################################################################
 data "external" "local_ip" {
-  program = ["bash", "-c", "echo {\\\"ip\\\":\\\"$(curl -s ifconfig.me)\\\"}"]
+  program = ["bash", "-c", "echo {\\\"ip\\\":\\\"$(curl -4 ifconfig.me)\\\"}"]
 }
 
 resource "aws_security_group" "allow_all" {

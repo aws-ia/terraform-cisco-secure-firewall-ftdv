@@ -30,6 +30,8 @@ Using this Terraform template following resources will be created:
 *Appliance mode is enabled for service VPC Transit Gateway Attachment*
 
 ### Firewall Management Center Configuration
+Note: The following FMC configuration is an example configuration making use of the evaluation license. If there are more than 2 FTDv instances deployed then additional "fmc_devices" resources need to be added in the "main.tf" file.
+
 FMC Terraform provider is used to configure the following on the FMC
   - FTD Device Registration
   - Interface Configuration

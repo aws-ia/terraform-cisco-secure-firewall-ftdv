@@ -206,7 +206,7 @@ variable "mgmt_interface_sg" {
       from_port   = 8305
       protocol    = "TCP"
       to_port     = 8305
-      cidr_blocks = ["172.16.220.0/24", "172.16.210.0/24", "172.16.0.0/24"]
+      cidr_blocks = ["172.16.0.0/24"]
       description = "Mgmt Traffic from FMC"
     }
   ]
@@ -423,7 +423,6 @@ variable "fmc_username" {
 variable "fmc_password" {
   type = string
   description = "FMC admin password"
-  default = "Cisco@123"
 }
 
 variable "create_tgw1" {
@@ -471,7 +470,6 @@ variable "token" {
 variable "fmc_nat_id" {
   type        = string
   description = "FMC Registration NAT ID"
-  default = "cisco"
 }
 
 variable "fmc_insecure_skip_verify" {
@@ -484,4 +482,14 @@ variable "inscount" {
   type    = number
   description = "FTD instance count"
   default = 2
+}
+
+variable "reg_key" {
+  type = string
+  description = "FTD registration key"
+}
+
+variable "ftd_admin_password" {
+  type = string
+  description = "FTD Admin password"
 }

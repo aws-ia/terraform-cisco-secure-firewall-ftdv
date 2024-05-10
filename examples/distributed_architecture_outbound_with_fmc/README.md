@@ -20,6 +20,8 @@ Using this Terraform template following resources will be created:
 
 ### Terrform for FMC configuration
 All the configuration on the Firewall Management Center are done by using the Cisco FMC Terraform Provider.
+Note: The following FMC configuration is an example configuration making use of the evaluation license. If there are more than 2 FTDv instances deployed then additional "fmc_devices" resources need to be added in the "main.tf" file.
+
 FMC Terraform provider is used to configure the following on the FMC
   - FTD Device Registration
   - Interface Configuration

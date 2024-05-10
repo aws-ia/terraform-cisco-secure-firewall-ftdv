@@ -28,6 +28,8 @@ Using this Terraform template following resources will be created:
 
 ### Terrform for FMC configuration
 All the configuration on the Firewall Management Center are done by using the Cisco FMC Terraform Provider.
+Note: The following FMC configuration is an example configuration making use of the evaluation license. If there are more than 2 FTDv instances deployed then additional "fmc_devices" resources need to be added in the "main.tf" file.
+
 FMC Terraform provider is used to configure the following on the FMC
   - FTD Device Registration
   - Interface Configuration
@@ -187,6 +189,7 @@ Make sure you have the following:
 | <a name="input_transit_gateway_name2"></a> [transit\_gateway\_name2](#input\_transit\_gateway\_name2) | Name of the Transit Gateway created | `string` | `null` | no |
 | <a name="input_use_fmc_eip"></a> [use\_fmc\_eip](#input\_use\_fmc\_eip) | boolean value to use EIP on FMC or not | `bool` | `false` | no |
 | <a name="input_use_ftd_eip"></a> [use\_ftd\_eip](#input\_use\_ftd\_eip) | boolean value to use EIP on FTD or not | `bool` | `false` | no |
+| <a name="input_inscount"></a> [inscount](#input\_inscount) | number of FTDv instances | `number` | no |
 
 ## Outputs
 

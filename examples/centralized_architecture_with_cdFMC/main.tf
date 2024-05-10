@@ -36,6 +36,8 @@ module "instance" {
   ftd_size                = var.ftd_size
   instances_per_az        = var.instances_per_az
   availability_zone_count = var.availability_zone_count
+  ftd_admin_password      = var.ftd_admin_password
+  reg_key                 = var.reg_key
   fmc_mgmt_ip             = var.fmc_ip
   ftd_mgmt_interface      = module.service_network.mgmt_interface
   ftd_inside_interface    = module.service_network.inside_interface
