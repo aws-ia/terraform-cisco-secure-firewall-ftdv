@@ -50,6 +50,7 @@ module "instance" {
   ftd_diag_interface      = module.service_network.diag_interface
   fmcmgmt_interface       = var.create_fmc ? module.service_network.fmcmgmt_interface : null
   block_encrypt           = var.block_encrypt
+  fmc_nat_id              = var.fmc_nat_id
 }
 
 module "gwlb" {
