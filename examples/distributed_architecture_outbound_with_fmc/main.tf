@@ -22,9 +22,12 @@ module "service_network" {
 module "spoke_network" {
   source              = "CiscoDevNet/secure-firewall/aws//modules/network"
   vpc_name            = var.spoke_vpc_name
+  vpc_cidr            = var.spoke_vpc_cidr
   create_igw          = var.spoke_create_igw
   igw_name            = var.spoke_igw_name
+  create_fmc          = false
   outside_subnet_name = var.spoke_subnet_name
+  outside_subnet_cidr = var.spoke_subnet_cidr
 }
 
 module "instance" {
