@@ -78,7 +78,6 @@ variable "igw_id" {
 }
 
 variable "password" {
-  default     = "Cisco@123"
   description = "Password for FMCv"
   sensitive   = true
   type = string
@@ -100,4 +99,10 @@ variable "subnets" {
   default     = ["10.0.0.0/24"]
   description = "mgmt subnets"
   type = list(string)
+}
+
+variable "service_vpc_igw_name" {
+  type = string
+  description = "service VPC IGW name"
+  default = "service-vpc-igw"
 }

@@ -78,7 +78,6 @@ variable "igw_id" {
 }
 
 variable "password" {
-  default     = "Cisco@123"
   description = "Password for FMCv"
   sensitive   = true
   type = string
@@ -120,7 +119,7 @@ variable "spoke_vpc_name" {
   type = string
 }
 
-variable "service_igw_name" {
+variable "service_vpc_igw_name" {
   type = string
   description = "Service VPC IGW name"
   default = "service-vpc-igw"

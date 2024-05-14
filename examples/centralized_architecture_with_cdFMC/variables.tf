@@ -1,3 +1,6 @@
+#This variable file is for usecase - Existing Service and New Spoke VPC. If working on the usecase - Existing Service Existing Spoke VPC then replace
+#this file with the variables.tf file inside the centralized_with_existing_service_existing_spoke_cdfmc
+
 variable "aws_access_key" {
   type        = string
   description = "AWS ACCESS KEY"
@@ -21,7 +24,7 @@ variable "service_vpc_name" {
 
 variable "service_vpc_cidr" {
   type    = string
-  default = ""
+  default = "172.16.0.0/16"
   description = "Service VPC CIDR"
 }
 
@@ -62,7 +65,7 @@ variable "inside_subnet_cidr" {
 }
 
 variable "fmc_ip" {
-  description = "List out FMCv IPs . "
+  description = "cdFMC URL "
   type        = string
   default     = ""
 }
@@ -165,22 +168,7 @@ variable "mgmt_interface_sg" {
     cidr_blocks = list(string)
     description = string
   }))
-  default = [
-    {
-      from_port   = 8305
-      protocol    = "TCP"
-      to_port     = 8305
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "Mgmt Traffic from FMC"
-    },
-    {
-      from_port   = 22
-      protocol    = "TCP"
-      to_port     = 22
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "Mgmt Traffic from FMC"
-    }
-  ]
+  default = []
 }
 
 variable "instances_per_az" {
@@ -214,7 +202,7 @@ variable "spoke_create_igw" {
 variable "spoke_igw_name" {
   description = "name of existing IGW to be used"
   type        = string
-  default     = ""
+  default     = "spoke-igw"
 }
 
 variable "spoke_subnet_cidr" {
@@ -303,12 +291,6 @@ variable "create_tgw" {
   default     = true
 }
 
-variable "create_fmc" {
-  type        = bool
-  description = "Boolean value to decide if Cisco FMC needs to be created"
-  default     = false
-}
-
 variable "is_cdfmc" {
   type        = bool
   default     = true
@@ -363,7 +345,7 @@ variable "cdfmc_domain_uuid" {
 variable "block_encrypt" {
   type = bool
   description = "Encrypt block storage of FTD"
-  default = false
+  default = true
 }
 
 variable "reg_key" {

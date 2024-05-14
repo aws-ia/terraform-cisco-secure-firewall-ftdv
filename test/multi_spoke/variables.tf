@@ -36,7 +36,7 @@ variable "instances" {
 }
 
 variable "fmc_version" {
-  default     = "fmcv-7.2.7"
+  default     = "fmcv-7.4.1"
   type = string
   description = "Version of the FMCv"
 }
@@ -84,7 +84,6 @@ variable "igw_id" {
 }
 
 variable "password" {
-  default     = "Cisco@123"
   description = "Password for FMCv"
   sensitive   = true
   type = string

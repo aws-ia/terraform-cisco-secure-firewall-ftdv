@@ -245,7 +245,7 @@ variable "gwlbe_subnet_name" {
 variable "ngw_subnet_cidr" {
   type        = list(string)
   description = "List out NGW Subnet CIDR . "
-  default     = ["172.16.211.0/24", "172.16.221.0/24"]
+  default     = ["10.6.211.0/24", "10.6.221.0/24"]
 }
 
 variable "ngw_subnet_name" {
@@ -271,7 +271,7 @@ variable "keyname" {
 
 variable "block_encrypt" {
   description = "boolean value to encrypt block or not"
-  default = false
+  default = true
   type = bool
 }
 
@@ -294,7 +294,7 @@ variable "gwlb_tg_name" {
 variable "use_ftd_eip" {
   description = "boolean value to use EIP on FTD or not"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "use_fmc_eip" {
@@ -307,18 +307,6 @@ variable "ftd_version" {
   type    = string
   description = "FTD version"
   default = "ftdv-7.2.7"
-}
-
-variable "fmc_version" {
-  type    = string
-  description = "FMC version"
-  default = "fmcv-7.2.7"
-}
-
-variable "create_fmc" {
-  description = "Boolean value to create FMC or not"
-  type        = bool
-  default     = false
 }
 
 variable "fmc_username" {
@@ -335,14 +323,8 @@ variable "fmc_password" {
 
 variable "inbound" {
   type    = bool
-  description = "direction of traffic flow"
+  description = "direction of traffic flow for distributed architecture"
   default = false
-}
-
-variable "service_vpc_cidr" {
-  type        = string
-  description = "Define CIDR to create a VPC"
-  default     = ""
 }
 
 variable "inscount" {
@@ -361,12 +343,6 @@ variable "fmc_insecure_skip_verify" {
   type    = bool
   description = "Condition to verify FMC certificate"
   default = true
-}
-
-variable "fmc_mgmt_interface" {
-  type    = string
-  description = "FMC mgmt interface id"
-  default = ""
 }
 
 variable "ftd_mgmt_interface_ips" {

@@ -1,7 +1,6 @@
 module "service_network" {
   source               = "CiscoDevNet/secure-firewall/aws//modules/network"
   vpc_name             = var.service_vpc_name
-  vpc_cidr             = var.service_vpc_cidr
   create_igw           = var.service_create_igw
   igw_name             = var.service_igw_name
   mgmt_subnet_cidr     = var.mgmt_subnet_cidr
@@ -43,7 +42,6 @@ module "instance" {
   ftd_inside_interface    = module.service_network.inside_interface
   ftd_outside_interface   = module.service_network.outside_interface
   ftd_diag_interface      = module.service_network.diag_interface
-  create_fmc              = var.create_fmc
   fmc_nat_id              = var.fmc_nat_id
   block_encrypt           = var.block_encrypt
 }
@@ -76,7 +74,6 @@ module "nat_gw" {
   internet_gateway        = module.service_network.internet_gateway[0]
   spoke_subnet_cidr       = module.spoke_network.outside_subnet_cidr
   gwlb_endpoint_id        = module.gwlbe.gwlb_endpoint_id
-  is_cdfmc                = var.is_cdfmc
   mgmt_rt_id              = module.service_network.mgmt_rt_id
 }
 
@@ -173,7 +170,6 @@ resource "fmc_access_policies" "access_policy" {
 }
 
 resource "fmc_access_rules" "access_rule_1" {
-  count = var.block_encrypt ? 0 : 1
   acp     = fmc_access_policies.access_policy.id
   section = "mandatory"
   name    = "Rule-1"
@@ -199,13 +195,13 @@ resource "fmc_access_rules" "access_rule_1" {
 }
 
 resource "fmc_ftd_nat_policies" "nat_policy" {
-  count       = var.block_encrypt ? 0 : var.inscount
+  count       = var.inscount
   name        = "NAT_Policy${count.index}"
   description = "Nat policy by terraform"
 }
 
 resource "fmc_ftd_manualnat_rules" "new_rule" {
-  count      = var.block_encrypt ? 0 : var.inscount
+  count      = var.inscount
   nat_policy = fmc_ftd_nat_policies.nat_policy[count.index].id
   nat_type   = "static"
   original_source {
@@ -240,7 +236,7 @@ resource "fmc_devices" "device1" {
   depends_on   = [time_sleep.wait_for_ftd, fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside,fmc_smart_license.license]
   name         = "FTD1"
   hostname     = module.service_network.mgmt_interface_ip[0]
-  regkey       = "cisco"
+  regkey       = var.reg_key
   license_caps = ["MALWARE"]
   nat_id       = var.fmc_nat_id
   access_policy {
@@ -252,9 +248,9 @@ resource "fmc_devices" "device2" {
   depends_on   = [fmc_devices.device1]
   name         = "FTD2"
   hostname     = module.service_network.mgmt_interface_ip[1]
-  regkey       = "cisco"
+  regkey       = var.reg_key
   license_caps = ["MALWARE"]
-  nat_id       = "cisco"
+  nat_id       = var.fmc_nat_id
   access_policy {
     id   = fmc_access_policies.access_policy.id
     type = fmc_access_policies.access_policy.type
@@ -319,7 +315,7 @@ resource "fmc_staticIPv4_route" "route" {
 
 resource "fmc_policy_devices_assignments" "policy_assignment" {
   depends_on = [fmc_staticIPv4_route.route]
-  count      = var.block_encrypt ? 0 : var.inscount
+  count      = var.inscount
   policy {
     id   = fmc_ftd_nat_policies.nat_policy[count.index].id
     type = fmc_ftd_nat_policies.nat_policy[count.index].type

@@ -1,5 +1,5 @@
 module "service_network" {
-  source               = "CiscoDevNet/secure-firewall/aws//modules/network/latest"
+  source               = "CiscoDevNet/secure-firewall/aws//modules/network"
   vpc_name             = var.service_vpc_name
   vpc_cidr             = var.service_vpc_cidr
   create_igw           = var.service_create_igw
@@ -20,7 +20,7 @@ module "service_network" {
 }
 
 module "spoke_network" {
-  source              = "CiscoDevNet/secure-firewall/aws//modules/network/latest"
+  source              = "CiscoDevNet/secure-firewall/aws//modules/network"
   vpc_name            = var.spoke_vpc_name
   vpc_cidr            = var.spoke_vpc_cidr
   create_igw          = var.spoke_create_igw
@@ -29,27 +29,8 @@ module "spoke_network" {
   outside_subnet_name = var.spoke_subnet_name
 }
 
-module "instance" {
-  source                  = "CiscoDevNet/secure-firewall/aws//modules/firewall_instance/latest"
-  ftd_version             = var.ftd_version
-  keyname                 = var.keyname
-  ftd_size                = var.ftd_size
-  instances_per_az        = var.instances_per_az
-  availability_zone_count = var.availability_zone_count
-  ftd_admin_password      = var.ftd_admin_password
-  reg_key                 = var.reg_key
-  fmc_mgmt_ip             = var.fmc_ip
-  ftd_mgmt_interface      = module.service_network.mgmt_interface
-  ftd_inside_interface    = module.service_network.inside_interface
-  ftd_outside_interface   = module.service_network.outside_interface
-  ftd_diag_interface      = module.service_network.diag_interface
-  create_fmc              = var.create_fmc
-  fmc_nat_id              = var.fmc_nat_id
-  block_encrypt           = var.block_encrypt
-}
-
 module "gwlb" {
-  source      = "CiscoDevNet/secure-firewall/aws//modules/gwlb/latest"
+  source      = "CiscoDevNet/secure-firewall/aws//modules/gwlb"
   gwlb_name   = var.gwlb_name
   gwlb_tg_name = var.gwlb_tg_name
   gwlb_subnet = module.service_network.outside_subnet
@@ -58,7 +39,7 @@ module "gwlb" {
 }
 
 module "gwlbe" {
-  source            = "CiscoDevNet/secure-firewall/aws//modules/gwlbe/latest"
+  source            = "CiscoDevNet/secure-firewall/aws//modules/gwlbe"
   gwlbe_subnet_cidr = var.gwlbe_subnet_cidr
   gwlbe_subnet_name = var.gwlbe_subnet_name
   vpc_id            = module.service_network.vpc_id
@@ -68,7 +49,7 @@ module "gwlbe" {
 }
 
 module "nat_gw" {
-  source                  = "CiscoDevNet/secure-firewall/aws//modules/nat_gw/latest"
+  source                  = "CiscoDevNet/secure-firewall/aws//modules/nat_gw"
   ngw_subnet_cidr         = var.ngw_subnet_cidr
   ngw_subnet_name         = var.ngw_subnet_name
   availability_zone_count = var.availability_zone_count
@@ -81,7 +62,7 @@ module "nat_gw" {
 }
 
 module "transitgateway" {
-  source                      = "CiscoDevNet/secure-firewall/aws//modules/transitgateway/latest"
+  source                      = "CiscoDevNet/secure-firewall/aws//modules/transitgateway"
   create_tgw                  = var.create_tgw
   vpc_service_id              = module.service_network.vpc_id
   vpc_spoke_id                = module.spoke_network.vpc_id
@@ -105,14 +86,14 @@ module "transitgateway" {
 ################################################################################################
 
 resource "time_sleep" "wait_for_ftd" {
-  depends_on = [module.transitgateway, module.service_network, module.gwlb, module.gwlbe, module.instance]
+  depends_on = [module.transitgateway, module.service_network, module.gwlb, module.gwlbe]
 
-  create_duration = "6m"
+  create_duration = "8m"
 }
 
-################################################################################################
-# Data blocks
-################################################################################################
+# ################################################################################################
+# # Data blocks
+# ################################################################################################
 data "fmc_port_objects" "http" {
   name = "HTTP"
 }
@@ -160,10 +141,6 @@ resource "fmc_host_objects" "inside_gw" {
   value = var.inside_gw_ips[count.index]
 }
 
-resource "fmc_smart_license" "license" {
-  registration_type = "EVALUATION"
-}
-
 resource "fmc_access_policies" "access_policy" {
   name                              = "Terraform Access Policy"
   default_action                    = "BLOCK"
@@ -172,7 +149,6 @@ resource "fmc_access_policies" "access_policy" {
 }
 
 resource "fmc_access_rules" "access_rule_1" {
-  count   = var.block_encrypt ? 0 : 1
   acp     = fmc_access_policies.access_policy.id
   section = "mandatory"
   name    = "Rule-1"
@@ -197,14 +173,71 @@ resource "fmc_access_rules" "access_rule_1" {
   new_comments = ["Testing via terraform"]
 }
 
+resource "cdo_ftd_device" "ftd" {
+  count              = var.inscount
+  name               = "FTD-${count.index + 1}"
+  access_policy_name = fmc_access_policies.access_policy.name
+  performance_tier   = "FTDv10"
+  virtual            = true
+  licenses           = ["BASE"]
+}
+
+resource "aws_instance" "ftdv" {
+  depends_on = [ cdo_ftd_device.ftd ]
+  count = var.inscount
+  ami               = data.aws_ami.ftdv.id
+  instance_type     = var.ftd_size
+  key_name          = var.keyname
+
+  root_block_device {
+      #encrypted = var.block_encrypt
+      encrypted = true
+  }
+  ebs_block_device {
+    device_name = "/dev/xvda"
+    volume_size = 52
+    volume_type = "gp2"
+    delete_on_termination = true
+    #encrypted = var.block_encrypt
+    encrypted = true
+  }
+
+  network_interface {
+    network_interface_id = element(module.service_network.mgmt_interface, count.index)
+    device_index         = 0
+  }
+  network_interface {
+    network_interface_id = element(module.service_network.diag_interface, count.index)
+    device_index         = 1
+  }
+  network_interface {
+    network_interface_id = element(module.service_network.outside_interface, count.index)
+    device_index         = 2
+  }
+  network_interface {
+    network_interface_id = element(module.service_network.inside_interface, count.index)
+    device_index         = 3
+  }
+  user_data = data.template_file.ftd_startup_file[count.index].rendered
+  tags = merge({
+    Name = "Cisco ftdv${count.index}"
+  })
+}
+
+resource "cdo_ftd_device_onboarding" "ftd_onboard" {
+  depends_on = [ time_sleep.wait_for_ftd ]
+  count = var.inscount
+  ftd_uid = cdo_ftd_device.ftd[count.index].id
+}
+
 resource "fmc_ftd_nat_policies" "nat_policy" {
-  count       = var.block_encrypt ? 0 : var.inscount
+  count       = var.inscount
   name        = "NAT_Policy${count.index}"
   description = "Nat policy by terraform"
 }
 
 resource "fmc_ftd_manualnat_rules" "new_rule" {
-  count      = var.block_encrypt ? 0 : var.inscount
+  count      = var.inscount
   nat_policy = fmc_ftd_nat_policies.nat_policy[count.index].id
   nat_type   = "static"
   original_source {
@@ -235,44 +268,13 @@ resource "fmc_ftd_manualnat_rules" "new_rule" {
   interface_in_translated_source    = true
 }
 
-resource "fmc_devices" "device1"{
-depends_on   = [time_sleep.wait_for_ftd, fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside]
-name = "FTD1"
-hostname = module.service_network.aws_ftd_eip[0]
-regkey = "cisco"
-nat_id = var.fmc_nat_id
-performance_tier = "FTDv50"
-license_caps = [ "MALWARE"]
-access_policy {
-  id   = fmc_access_policies.access_policy.id
-  type = fmc_access_policies.access_policy.type
-}
-cdo_host = "www.apj.cdo.cisco.com"
-cdo_region = "apj"
-}
-
-resource "fmc_devices" "device2"{
-depends_on   = [fmc_devices.device1]
-name = "FTD2"
-hostname = module.service_network.aws_ftd_eip[1]
-regkey = "cisco"
-nat_id = var.fmc_nat_id
-performance_tier = "FTDv50"
-license_caps = [ "MALWARE"]
-access_policy {
-  id   = fmc_access_policies.access_policy.id
-  type = fmc_access_policies.access_policy.type
-}
-cdo_host = "www.apj.cdo.cisco.com"
-cdo_region = "apj"
-}
 ##############################
 #Intermediate data block for devices
 ##############################
 data "fmc_devices" "device" {
-  depends_on = [fmc_devices.device2]
+  depends_on = [ cdo_ftd_device_onboarding.ftd_onboard ]
   count      = var.inscount
-  name       = "FTD${count.index + 1}"
+  name       = "FTD-${count.index + 1}"
 }
 ##############################
 resource "fmc_device_physical_interfaces" "physical_interfaces00" {
@@ -325,7 +327,7 @@ resource "fmc_staticIPv4_route" "route" {
 
 resource "fmc_policy_devices_assignments" "policy_assignment" {
   depends_on = [fmc_staticIPv4_route.route]
-  count      = var.block_encrypt ? 0 : var.inscount
+  count      = var.inscount
   policy {
     id   = fmc_ftd_nat_policies.nat_policy[count.index].id
     type = fmc_ftd_nat_policies.nat_policy[count.index].type

@@ -104,7 +104,7 @@ resource "aws_internet_gateway" "int_gw" {
   count  = var.igw_id != "" ? 0 : 1
   vpc_id = var.vpc_id != "" ? var.vpc_id : aws_vpc.fmc_vpc[0].id
   tags = {
-    Name = var.service_igw_name
+    Name = var.service_vpc_igw_name
   }
 }
 

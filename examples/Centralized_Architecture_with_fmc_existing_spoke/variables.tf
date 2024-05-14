@@ -13,22 +13,10 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "create_fmc" {
-  type = bool
-  description = "condition to create fmc or not"
-  default = false
-}
-
 variable "service_vpc_name" {
   type        = string
   description = "Service VPC Name"
-  default     = "service-vpc"
-}
-
-variable "service_vpc_cidr" {
-  type = string
-  description = "service vpc CIDR"
-  default = ""
+  default     = "Cisco-FMCv"
 }
 
 variable "service_create_igw" {
@@ -68,7 +56,7 @@ variable "inside_subnet_cidr" {
 }
 
 variable "fmc_ip" {
-  description = "List out FMCv IPs . "
+  description = "FMCv IP"
   type        = string
   default     = ""
 }
@@ -207,7 +195,7 @@ variable "spoke_vpc_name" {
 variable "spoke_create_igw" {
   type        = bool
   description = " Condition to create IGW . "
-  default     = true
+  default     = false
 }
 
 variable "spoke_igw_name" {
@@ -231,7 +219,7 @@ variable "spoke_subnet_name" {
 variable "gwlbe_subnet_cidr" {
   type        = list(string)
   description = "List out GWLBE Subnet CIDR . "
-  default     = []
+  default     = ["172.16.212.0/24", "172.16.232.0/24"]
 }
 
 variable "gwlbe_subnet_name" {
@@ -243,7 +231,7 @@ variable "gwlbe_subnet_name" {
 variable "ngw_subnet_cidr" {
   type        = list(string)
   description = "List out NGW Subnet CIDR . "
-  default     = []
+  default     =  ["172.16.211.0/24", "172.16.221.0/24"]
 }
 
 variable "ngw_subnet_name" {
@@ -268,6 +256,12 @@ variable "keyname" {
   default     = "ln"
 }
 
+variable "block_encrypt" {
+  description = "boolean value to encrypt block or not"
+  default = true
+  type = bool
+}
+
 ########################################################################
 ## GatewayLoadbalncer 
 ########################################################################
@@ -276,6 +270,12 @@ variable "gwlb_name" {
   type        = string
   description = "name for Gateway loadbalancer"
   default     = "GWLB"
+}
+
+variable "gwlb_tg_name" {
+  type = string
+  description = "GWLB target group name"
+  default = "gwlb-tg"
 }
 
 variable "transit_gateway_name" {
@@ -292,7 +292,7 @@ variable "use_ftd_eip" {
 
 variable "ftd_version" {
   type        = string
-  default     = "ftdv-7.3.0"
+  default     = "ftdv-7.2.7"
   description = "Version of the FTD to be deployed"
 }
 
@@ -310,12 +310,6 @@ variable "create_tgw" {
   type        = bool
   description = "Boolean value to decide if transit gateway needs to be created"
   default     = true
-}
-
-variable "is_cdfmc" {
-  type        = bool
-  default     = false
-  description = "Boolean value to decide if target fmc is cdfmc or not"
 }
 
 variable "fmc_nat_id" {

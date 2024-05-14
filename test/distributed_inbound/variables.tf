@@ -78,7 +78,6 @@ variable "igw_id" {
 }
 
 variable "password" {
-  default     = "Cisco@123"
   description = "Password for FMCv"
   sensitive   = true
   type = string

@@ -1,8 +1,6 @@
 module "service_network" {
   source = "CiscoDevNet/secure-firewall/aws//modules/network"
   vpc_name              = var.service_vpc_name
-  vpc_cidr              = var.service_vpc_cidr
-  create_fmc            = var.create_fmc
   create_igw            = var.service_create_igw
   igw_name              = var.service_igw_name
   mgmt_subnet_cidr      = var.mgmt_subnet_cidr
@@ -17,7 +15,6 @@ module "service_network" {
   outside_interface_sg  = var.outside_interface_sg
   inside_interface_sg   = var.inside_interface_sg
   mgmt_interface_sg     = var.mgmt_interface_sg
-  fmc_mgmt_interface_sg = var.mgmt_interface_sg
   use_fmc_eip           = var.use_fmc_eip
   use_ftd_eip           = var.use_ftd_eip
 }
@@ -28,7 +25,6 @@ module "spoke_network" {
   vpc_cidr            = var.spoke_vpc_cidr
   create_igw          = var.spoke_create_igw
   igw_name            = var.spoke_igw_name
-  create_fmc          = false
   outside_subnet_name = var.spoke_subnet_name
   outside_subnet_cidr = var.spoke_subnet_cidr
 }
@@ -36,7 +32,6 @@ module "spoke_network" {
 module "instance" {
   source = "CiscoDevNet/secure-firewall/aws//modules/firewall_instance"
   ftd_version             = var.ftd_version
-  create_fmc              = var.create_fmc
   keyname                 = var.keyname
   ftd_size                = var.ftd_size
   instances_per_az        = var.instances_per_az
@@ -48,8 +43,8 @@ module "instance" {
   ftd_inside_interface    = module.service_network.inside_interface
   ftd_outside_interface   = module.service_network.outside_interface
   ftd_diag_interface      = module.service_network.diag_interface
-  fmcmgmt_interface       = var.create_fmc ? module.service_network.fmcmgmt_interface : null
   block_encrypt           = var.block_encrypt
+  fmc_nat_id              = var.fmc_nat_id
 }
 
 module "gwlb" {
@@ -95,9 +90,11 @@ resource "time_sleep" "wait_for_ftd" {
 # Data blocks
 ################################################################################################
 data "fmc_port_objects" "http" {
+  depends_on     = [time_sleep.wait_for_ftd]
   name = "HTTP"
 }
 data "fmc_port_objects" "ssh" {
+  depends_on     = [time_sleep.wait_for_ftd]
   name = "SSH"
 }
 data "fmc_network_objects" "any_ipv4" {
@@ -154,7 +151,6 @@ resource "fmc_access_policies" "access_policy" {
 }
 
 resource "fmc_access_rules" "access_rule_1" {
-  count   = var.block_encrypt ? 0 : 1
   acp     = fmc_access_policies.access_policy.id
   section = "mandatory"
   name    = "Rule-1"
@@ -180,13 +176,13 @@ resource "fmc_access_rules" "access_rule_1" {
 }
 
 resource "fmc_ftd_nat_policies" "nat_policy" {
-  count       = var.block_encrypt ? 0 : var.inscount
+  count       = var.inscount
   name        = "NAT_Policy${count.index}"
   description = "Nat policy by terraform"
 }
 
 resource "fmc_ftd_manualnat_rules" "new_rule" {
-  count      = var.block_encrypt ? 0 : var.inscount
+  count      = var.inscount
   nat_policy = fmc_ftd_nat_policies.nat_policy[count.index].id
   nat_type   = "static"
   original_source {
@@ -221,7 +217,7 @@ resource "fmc_devices" "device1" {
   depends_on   = [time_sleep.wait_for_ftd, fmc_ftd_nat_policies.nat_policy, fmc_security_zone.inside, fmc_security_zone.outside,fmc_smart_license.license]
   name         = "FTD1"
   hostname     = module.service_network.mgmt_interface_ip[0]
-  regkey       = "cisco"
+  regkey       = var.reg_key
   license_caps = ["MALWARE"]
   nat_id       = var.fmc_nat_id
   access_policy {
@@ -233,7 +229,7 @@ resource "fmc_devices" "device2" {
   depends_on   = [fmc_smart_license.license, fmc_devices.device1]
   name         = "FTD2"
   hostname     = module.service_network.mgmt_interface_ip[1]
-  regkey       = "cisco"
+  regkey       = var.reg_key
   license_caps = ["MALWARE"]
   nat_id       = var.fmc_nat_id
   access_policy {
@@ -300,7 +296,7 @@ resource "fmc_staticIPv4_route" "route" {
 
 resource "fmc_policy_devices_assignments" "policy_assignment" {
   depends_on = [fmc_staticIPv4_route.route]
-  count      = var.block_encrypt ? 0 : var.inscount
+  count      = var.inscount
   policy {
     id   = fmc_ftd_nat_policies.nat_policy[count.index].id
     type = fmc_ftd_nat_policies.nat_policy[count.index].type

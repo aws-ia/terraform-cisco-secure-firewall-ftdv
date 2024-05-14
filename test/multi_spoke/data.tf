@@ -16,13 +16,12 @@ data "aws_availability_zones" "available" {
 }
 
 data "aws_ami" "fmcv" {
-  most_recent = true
+  #most_recent = true
   owners = ["aws-marketplace"]
-
   filter {
     name   = "name"
     #values = ["${var.fmc_version}*"]
-    values = ["fmcv-*"]
+    values = ["fmcv-7.4.1*"]
   }
   filter {
     name   = "product-code"
