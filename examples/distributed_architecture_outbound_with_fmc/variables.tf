@@ -160,34 +160,10 @@ variable "mgmt_interface_sg" {
       from_port   = 8305
       protocol    = "TCP"
       to_port     = 8305
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = ["172.16.0.0/24"]
       description = "Mgmt Traffic from FMC"
     }
   ]
-}
-
-variable "fmc_mgmt_interface_sg" {
-  description = "Can be specified multiple times for each ingress rule. "
-  type = list(object({
-    from_port   = number
-    protocol    = string
-    to_port     = number
-    cidr_blocks = list(string)
-    description = string
-  }))
-  default = [{
-    from_port   = 0
-    protocol    = "-1"
-    to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Mgmt Interface SG"
-  }]
-}
-
-variable "instances_per_az" {
-  type        = number
-  description = "Spacified no. of instance per az wants to be create . "
-  default     = 1
 }
 
 ########################################################################
@@ -336,7 +312,6 @@ variable "inscount" {
 variable "fmc_nat_id" {
   type    = string
   description = "NAT GW ID"
-  default = "cisco"
 }
 
 variable "fmc_insecure_skip_verify" {

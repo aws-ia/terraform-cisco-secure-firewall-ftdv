@@ -164,7 +164,7 @@ variable "mgmt_interface_sg" {
       from_port   = 8305
       protocol    = "TCP"
       to_port     = 8305
-      cidr_blocks = ["172.16.220.0/24", "172.16.210.0/24", "172.16.0.0/24"]
+      cidr_blocks = ["172.16.0.0/24"]
       description = "Mgmt Traffic from FMC"
     }
   ]
@@ -253,7 +253,6 @@ variable "ftd_size" {
 variable "keyname" {
   type        = string
   description = "key to be used for the instances"
-  default     = "ln"
 }
 
 variable "block_encrypt" {
@@ -315,7 +314,6 @@ variable "create_tgw" {
 variable "fmc_nat_id" {
   type        = string
   description = "FMC Registration NAT ID"
-  default     = "cisco"
 }
 
 variable "fmc_host" {

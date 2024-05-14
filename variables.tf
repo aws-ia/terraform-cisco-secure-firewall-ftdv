@@ -315,7 +315,6 @@ variable "create_tgw" {
 variable "fmc_nat_id" {
   type        = string
   description = "FMC Registration NAT ID"
-  default     = "cisco"
 }
 
 variable "fmc_host" {

@@ -254,7 +254,6 @@ variable "ftd_size" {
 variable "keyname" {
   type        = string
   description = "key to be used for the instances"
-  default = "ln"
 }
 
 ########################################################################
@@ -305,7 +304,6 @@ variable "token" {
 variable "fmc_nat_id" {
   type        = string
   description = "FMC Registration NAT ID"
-  default     = "cisco"
 }
 
 variable "fmc_insecure_skip_verify" {

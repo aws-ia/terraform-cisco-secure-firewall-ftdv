@@ -183,7 +183,7 @@ variable "instances_per_az" {
 variable "spoke_vpc_cidr" {
   type        = string
   description = "Specified CIDR for VPC . "
-  default     = "10.0.0.0/16"
+  default     = "10.6.0.0/16"
 }
 
 variable "spoke_vpc_name" {
@@ -253,7 +253,6 @@ variable "ftd_size" {
 variable "keyname" {
   type        = string
   description = "key to be used for the instances"
-  default     = "ln"
 }
 
 variable "block_encrypt" {
@@ -315,7 +314,6 @@ variable "create_tgw" {
 variable "fmc_nat_id" {
   type        = string
   description = "FMC Registration NAT ID"
-  default     = "cisco"
 }
 
 variable "fmc_host" {
