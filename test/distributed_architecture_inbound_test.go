@@ -70,9 +70,9 @@ func TestDistributedArchitectureInbound(t *testing.T) {
 		time.Sleep(25 * time.Minute)
 		test_structure.SaveTerraformOptions(t, fmc_config_dir_path, fmcConfigTerraformOptions)
 
-		terraform.InitAndApply(t, fmcConfigTerraformOptions)
+		//terraform.InitAndApply(t, fmcConfigTerraformOptions)
 		// Initialize and apply Terraform configuration
-		/* output, err := terraform.InitAndApplyE(t, fmcConfigTerraformOptions)
+		output, err := terraform.InitAndApplyE(t, fmcConfigTerraformOptions)
 		if err != nil {
 			fmt.Println("Error during Terraform apply:", err)
 
@@ -94,7 +94,7 @@ func TestDistributedArchitectureInbound(t *testing.T) {
 			t.FailNow()
 		} else {
 			fmt.Println("distributed_architecture_inbound_with_fmc completed successfully. Output:", output)
-		} */
+		}
 	})
 
 	defer test_structure.RunTestStage(t, "destroy_dai", func() {
