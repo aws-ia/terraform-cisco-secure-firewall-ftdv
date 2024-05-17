@@ -166,6 +166,12 @@ variable "mgmt_interface_sg" {
   ]
 }
 
+variable "instances_per_az" {
+  type        = number
+  description = "Spacified no. of instance per az wants to be create . "
+  default     = 1
+}
+
 ########################################################################
 ## Spoke  
 ########################################################################
