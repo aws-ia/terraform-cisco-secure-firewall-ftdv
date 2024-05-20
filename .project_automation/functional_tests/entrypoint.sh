@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 ## WARNING: DO NOT modify the content of entrypoint.sh
 # Use ./config/functional_tests/pre-entrypoint-helpers.sh or ./config/functional_tests/post-entrypoint-helpers.sh 

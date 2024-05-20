@@ -16,15 +16,17 @@ data "aws_availability_zones" "available" {
 }
 
 data "aws_ami" "fmcv" {
-  #most_recent = true      // you can enable this if you want to deploy more
+  #most_recent = true
   owners = ["aws-marketplace"]
-
   filter {
     name   = "name"
-    values = ["${var.fmc_version}*"]
+    #values = ["${var.fmc_version}*"]
+    values = ["fmcv-7.4.1*"]
   }
-
-
+  filter {
+    name   = "product-code"
+    values = ["bhx85r4r91ls2uwl69ajm9v1b"]
+  }
   filter {
     name   = "virtualization-type"
     values = ["hvm"]

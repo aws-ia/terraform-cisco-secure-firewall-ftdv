@@ -36,7 +36,7 @@ variable "instances" {
 }
 
 variable "fmc_version" {
-  default     = "fmcv-7.3.0"
+  default     = "fmcv-7.2.7"
   type = string
   description = "Version of the FMCv"
 }
@@ -78,7 +78,6 @@ variable "igw_id" {
 }
 
 variable "password" {
-  default     = "Cisco@123"
   description = "Password for FMCv"
   sensitive   = true
   type = string
@@ -90,7 +89,7 @@ variable "hostname" {
   type = string
 }
 
-variable "key_name" {
+variable "keyname" {
   description = "AWS EC2 Key"
   default = "ln"
   type = string
@@ -100,4 +99,10 @@ variable "subnets" {
   default     = ["10.0.0.0/24"]
   description = "mgmt subnets"
   type = list(string)
+}
+
+variable "service_vpc_igw_name" {
+  type = string
+  description = "service VPC IGW name"
+  default = "service-vpc-igw"
 }

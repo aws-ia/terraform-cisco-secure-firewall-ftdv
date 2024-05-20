@@ -160,28 +160,10 @@ variable "mgmt_interface_sg" {
       from_port   = 8305
       protocol    = "TCP"
       to_port     = 8305
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = ["172.16.0.0/24"]
       description = "Mgmt Traffic from FMC"
     }
   ]
-}
-
-variable "fmc_mgmt_interface_sg" {
-  description = "Can be specified multiple times for each ingress rule. "
-  type = list(object({
-    from_port   = number
-    protocol    = string
-    to_port     = number
-    cidr_blocks = list(string)
-    description = string
-  }))
-  default = [{
-    from_port   = 0
-    protocol    = "-1"
-    to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Mgmt Interface SG"
-  }]
 }
 
 variable "instances_per_az" {
@@ -245,7 +227,7 @@ variable "gwlbe_subnet_name" {
 variable "ngw_subnet_cidr" {
   type        = list(string)
   description = "List out NGW Subnet CIDR . "
-  default     = ["172.16.211.0/24", "172.16.221.0/24"]
+  default     = ["10.6.211.0/24", "10.6.221.0/24"]
 }
 
 variable "ngw_subnet_name" {
@@ -271,7 +253,7 @@ variable "keyname" {
 
 variable "block_encrypt" {
   description = "boolean value to encrypt block or not"
-  default = false
+  default = true
   type = bool
 }
 
@@ -294,7 +276,7 @@ variable "gwlb_tg_name" {
 variable "use_ftd_eip" {
   description = "boolean value to use EIP on FTD or not"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "use_fmc_eip" {
@@ -306,19 +288,7 @@ variable "use_fmc_eip" {
 variable "ftd_version" {
   type    = string
   description = "FTD version"
-  default = "ftdv-7.3.0"
-}
-
-variable "fmc_version" {
-  type    = string
-  description = "FMC version"
-  default = "fmcv-7.3.0"
-}
-
-variable "create_fmc" {
-  description = "Boolean value to create FMC or not"
-  type        = bool
-  default     = false
+  default = "ftdv-7.2.7"
 }
 
 variable "fmc_username" {
@@ -335,14 +305,8 @@ variable "fmc_password" {
 
 variable "inbound" {
   type    = bool
-  description = "direction of traffic flow"
+  description = "direction of traffic flow for distributed architecture"
   default = false
-}
-
-variable "service_vpc_cidr" {
-  type        = string
-  description = "Define CIDR to create a VPC"
-  default     = ""
 }
 
 variable "inscount" {
@@ -354,19 +318,12 @@ variable "inscount" {
 variable "fmc_nat_id" {
   type    = string
   description = "NAT GW ID"
-  default = "cisco"
 }
 
 variable "fmc_insecure_skip_verify" {
   type    = bool
   description = "Condition to verify FMC certificate"
   default = true
-}
-
-variable "fmc_mgmt_interface" {
-  type    = string
-  description = "FMC mgmt interface id"
-  default = ""
 }
 
 variable "ftd_mgmt_interface_ips" {
@@ -379,4 +336,14 @@ variable "fmc_host" {
   type    = string
   description = "FMC public IP"
   default = ""
+}
+
+variable "reg_key" {
+  type = string
+  description = "FTD registration key"
+}
+
+variable "ftd_admin_password" {
+  type = string
+  description = "FTD Admin password"
 }

@@ -13,12 +13,6 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "service_vpc_cidr" {
-  type        = string
-  description = "Service VPC CIDR"
-  default     = ""
-}
-
 variable "service_vpc_name" {
   type        = string
   description = "Service VPC Name"
@@ -43,22 +37,10 @@ variable "mgmt_subnet_cidr" {
   default     = ["172.16.220.0/24", "172.16.210.0/24"]
 }
 
-variable "ftd_mgmt_ip" {
-  description = "List out management IPs . "
-  type        = list(string)
-  default     = []
-}
-
 variable "outside_subnet_cidr" {
   description = "List out outside Subnet CIDR . "
   type        = list(string)
   default     = ["172.16.230.0/24", "172.16.241.0/24"]
-}
-
-variable "ftd_outside_ip" {
-  type        = list(string)
-  description = "List outside IPs . "
-  default     = []
 }
 
 variable "diag_subnet_cidr" {
@@ -67,22 +49,10 @@ variable "diag_subnet_cidr" {
   default     = ["172.16.24.0/24", "172.16.240.0/24"]
 }
 
-variable "ftd_diag_ip" {
-  type        = list(string)
-  description = "List out FTD Diagonostic IPs . "
-  default     = []
-}
-
 variable "inside_subnet_cidr" {
   description = "List out inside Subnet CIDR . "
   type        = list(string)
   default     = ["172.16.29.0/24", "172.16.190.0/24"]
-}
-
-variable "ftd_inside_ip" {
-  description = "List FTD inside IPs . "
-  type        = list(string)
-  default     = []
 }
 
 variable "ftd_inside_gw" {
@@ -206,7 +176,7 @@ variable "mgmt_interface_sg" {
       from_port   = 8305
       protocol    = "TCP"
       to_port     = 8305
-      cidr_blocks = ["172.16.220.0/24", "172.16.210.0/24", "172.16.0.0/24"]
+      cidr_blocks = ["172.16.0.0/24"]
       description = "Mgmt Traffic from FMC"
     }
   ]
@@ -317,18 +287,6 @@ variable "gwlb_tg_name" {
   default = "gwlb-tg"
 }
 
-variable "ngw_subnet_cidr" {
-  type        = list(string)
-  description = "List out NGW Subnet CIDR . "
-  default     = []
-}
-
-variable "ngw_subnet_name" {
-  type        = list(string)
-  description = "List out NGW Subnet names . "
-  default     = []
-}
-
 ########################################################################
 ## Instances
 ########################################################################
@@ -346,7 +304,7 @@ variable "keyname" {
 
 variable "block_encrypt" {
   description = "boolean value to encrypt block or not"
-  default = false
+  default = true
   type = bool
 }
 
@@ -366,12 +324,6 @@ variable "transit_gateway_name1" {
   default     = "tg-1"
 }
 
-variable "transit_gateway_name2" {
-  type        = string
-  description = "Name of the Transit Gateway created"
-  default     = "tg-2"
-}
-
 variable "use_ftd_eip" {
   description = "boolean value to use EIP on FTD or not"
   type        = bool
@@ -385,33 +337,9 @@ variable "use_fmc_eip" {
 }
 
 variable "ftd_version" {
-  default = "ftdv-7.3.0"
+  default = "ftdv-7.2.7"
   type = string
   description = "FTD version"
-}
-
-variable "fmc_version" {
-  default = "fmcv-7.3.0"
-  type = string
-  description = "FMC version"
-}
-
-variable "create_fmc" {
-  description = "Boolean value to create FMC or not"
-  type        = bool
-  default     = false
-}
-
-variable "create_fmc_spoke1" {
-  description = "Boolean value to create FMC or not"
-  type        = bool
-  default     = false
-}
-
-variable "create_fmc_spoke2" {
-  description = "Boolean value to create FMC or not"
-  type        = bool
-  default     = false
 }
 
 variable "fmc_username" {
@@ -423,7 +351,6 @@ variable "fmc_username" {
 variable "fmc_password" {
   type = string
   description = "FMC admin password"
-  default = "Cisco@123"
 }
 
 variable "create_tgw1" {
@@ -444,34 +371,9 @@ variable "tgw_subnet_cidr1" {
   default = ["172.18.215.0/24", "172.18.225.0/24"]
 }
 
-variable "tgw_subnet_cidr2" {
-  type    = list(string)
-  description = "transit gateway subnet cidr"
-  default = ["172.18.234.0/24", "172.18.235.0/24"]
-}
-
-variable "tgw_subnet_name2" {
-  type    = list(string)
-  description = "transit gateway subnet name"
-  default = ["tgw21", "tgw22"]
-}
-
-variable "is_cdfmc" {
-  type        = bool
-  default     = false
-  description = "Boolean value to decide if target fmc is cdfmc or not"
-}
-
-variable "token" {
-  type        = string
-  description = "CDO Access Token"
-  default     = ""
-}
-
 variable "fmc_nat_id" {
   type        = string
   description = "FMC Registration NAT ID"
-  default = "cisco"
 }
 
 variable "fmc_insecure_skip_verify" {
@@ -484,4 +386,14 @@ variable "inscount" {
   type    = number
   description = "FTD instance count"
   default = 2
+}
+
+variable "reg_key" {
+  type = string
+  description = "FTD registration key"
+}
+
+variable "ftd_admin_password" {
+  type = string
+  description = "FTD Admin password"
 }

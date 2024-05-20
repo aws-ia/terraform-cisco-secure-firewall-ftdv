@@ -64,7 +64,7 @@ variable "ftd_inside_gw" {
 }
 
 variable "fmc_ip" {
-  description = "List out FMCv IPs . "
+  description = "FMCv IP . "
   type        = string
   default     = ""
 }
@@ -160,7 +160,7 @@ variable "mgmt_interface_sg" {
       from_port   = 8305
       protocol    = "TCP"
       to_port     = 8305
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = ["172.16.0.0/24"]
       description = "Mgmt Traffic from FMC"
     }
   ]
@@ -241,7 +241,7 @@ variable "keyname" {
 
 variable "block_encrypt" {
   description = "boolean value to encrypt block or not"
-  default = false
+  default = true
   type = bool
 }
 
@@ -275,20 +275,8 @@ variable "use_fmc_eip" {
 
 variable "ftd_version" {
   type    = string
-  default = "ftdv-7.3.0"
+  default = "ftdv-7.2.7"
   description = "FTD version"
-}
-
-variable "fmc_version" {
-  type    = string
-  default = "fmcv-7.3.0"
-  description = "FMC version"
-}
-
-variable "create_fmc" {
-  description = "Boolean value to create FMC or not"
-  type        = bool
-  default     = true
 }
 
 variable "fmc_username" {
@@ -299,20 +287,13 @@ variable "fmc_username" {
 
 variable "fmc_password" {
   type    = string
-  default = "Cisco@123"
   description = "FMC admin password"
 }
 
 variable "inbound" {
   type    = bool
   default = true
-  description = "direction of traffic flow"
-}
-
-variable "service_vpc_cidr" {
-  type        = string
-  description = "Define CIDR to create a VPC"
-  default     = ""
+  description = "direction of traffic flow for distributed architecture"
 }
 
 variable "inscount" {
@@ -333,12 +314,6 @@ variable "fmc_insecure_skip_verify" {
   description = "Condition to verify fmc certificate"
 }
 
-variable "fmc_mgmt_interface" {
-  type    = string
-  default = ""
-  description = "FMC mgmt interface id"
-}
-
 variable "ftd_mgmt_interface_ips" {
   type    = list(string)
   default = []
@@ -349,4 +324,14 @@ variable "fmc_host" {
   type    = string
   default = ""
   description = "FMC public ip"
+}
+
+variable "reg_key" {
+  type = string
+  description = "FTD registration key"
+}
+
+variable "ftd_admin_password" {
+  type = string
+  description = "FTD Admin password"
 }
