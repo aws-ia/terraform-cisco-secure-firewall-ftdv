@@ -1,9 +1,9 @@
 <!-- BEGIN_TF_DOCS -->
 # Terraform Module Project
 
-:no\_entry\_sign: Do not edit this readme.md file. To learn how to change this content and work with this repository, refer to CONTRIBUTING.md
+<!-- :no\_entry\_sign: Do not edit this readme.md file. To learn how to change this content and work with this repository, refer to CONTRIBUTING.md
 
-## Readme Content
+## Readme Content -->
 
 ## Cisco Secure Firewall deployment in AWS in a Centralized and Distributed Architecture with GWLB using Terrform - Templates
 
