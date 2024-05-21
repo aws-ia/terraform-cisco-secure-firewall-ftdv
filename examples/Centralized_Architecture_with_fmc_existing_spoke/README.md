@@ -44,11 +44,7 @@ FMC Terraform provider is used to configure the following on the FMC
 
 ## Topology
 
-```html
-<p align="center">
-  <img src="../../images/centralized_architecture.png" alt="GWLB Centralized Architecture" width="100%">
-</p>
-```
+![GWLB Centralized Architecture](../../images/centralized\_architecture.png)
 
 ## Prerequisites
 

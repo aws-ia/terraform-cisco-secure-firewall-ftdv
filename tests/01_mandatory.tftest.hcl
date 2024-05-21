@@ -3,16 +3,16 @@
 # create additional *.tftest.hcl for your own unit / integration tests
 # use tests/*.auto.tfvars to add non-default variables
 
-run "mandatory_plan_basic" {
+run "mandatory_plan_distributed_architecture_inbound_with_fmc" {
   command = plan
   module {
-    source = "./examples/basic"
+    source = "./examples/distributed_architecture_inbound_with_fmc"
   }
 }
 
-run "mandatory_apply_basic" {
+run "mandatory_apply_distributed_architecture_inbound_with_fmc" {
   command = apply
   module {
-    source = "./examples/basic"
+    source = "./examples/distributed_architecture_inbound_with_fmc"
   }
 }

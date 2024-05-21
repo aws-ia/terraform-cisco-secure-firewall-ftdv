@@ -41,11 +41,7 @@ FMC Terraform provider is used to configure the following on the FMC
 
 ## Topology
 
-```html
-<p align="center">
-  <img src="../../images/distributed_inbound.png" alt="Distributed Architecture - Inbound" width="100%">
-</p>
-```
+![GWLB Distribute Architecture - Inbound](../../images/distributed\_inbound.png)
 
 ## Prerequisites
 
