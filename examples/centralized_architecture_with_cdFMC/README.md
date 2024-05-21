@@ -49,11 +49,7 @@ Note: A keypair needs to be created before running the plan.
 
 ## Topology
 
-```html
-<p align="center">
-  <img src="../../images/centralized_architecture.png" alt="GWLB Centralized Architecture with cdFMC" width="100%">
-</p>
-```
+![GWLB Centralized Architecture with cdFMC](../../images/centralized\_architecture.png)
 
 ## Prerequisites
 

@@ -51,11 +51,7 @@ Note: After the deployment a default route to the transit gateway need to be add
 
 ## Topology
 
-```html
-<p align="center">
-  <img src="../../images/multi_spoke.png" alt="GWLB Multiple Spoke Architecture" width="100%">
-</p>
-```
+![GWLB Multiple Spoke Architecture](../../images/multi\_spoke.png)
 
 ## Prerequisites
 
